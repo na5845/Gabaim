@@ -81,9 +81,11 @@
 
         .title-content {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: 35px;
+            padding-bottom: 0px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
         }
 
         .title-and-toggle {
@@ -99,7 +101,7 @@
         .title-box .title {
             font-size: 1.8em;
             margin-top: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
             background: linear-gradient(45deg, #FFD700, #FFA500);
             -webkit-background-clip: text;
@@ -409,10 +411,10 @@
         <div class="top-row">
             <div class="title-box">
                 <div class="title-content">
-                    <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo">
+                    <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo" style="width: 130px !important; height: 130px !important;">
                     <div class="title-and-toggle">
                         <h1 class="title">מעקב גיוס כספים</h1>
-                        <div class="toggle-container">
+                        <div class="toggle-container" style="border-bottom: none !important; padding-bottom: 0 !important;">
                             <div class="toggle-switch" id="periodToggle" onclick="togglePeriod()">
                                 <div class="toggle-text left">חודשי</div>
                                 <div class="toggle-text right">שנתי</div>
@@ -617,7 +619,7 @@
                 repDiv.innerHTML = `
                     <div class="group-progress">
                         ${progressHTML}
-                        <div class="group-percentage">${percentage}%</div>
+                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg);">${percentage}%</div>
                     </div>
                     <div class="group-name">${name}</div>
                 `;
