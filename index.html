@@ -72,7 +72,6 @@
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
             padding: 15px;
-            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 215, 0, 0.3);
             text-align: center;
             flex: 1;
@@ -94,8 +93,8 @@
         }
 
         .logo {
-            width: 150px;
-            height: auto;
+            width: 130px !important;
+            height: 130px !important;
         }
 
         .title-box .title {
@@ -120,7 +119,6 @@
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
             padding: 12px;
-            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
@@ -177,8 +175,9 @@
             height: 100%;
             background: linear-gradient(90deg, #FFD700, #FFA500);
             border-radius: 25px;
-            transition: width 0.5s ease;
+            transition: width 3s ease-out;
             position: relative;
+            width: 0%;
         }
 
         .main-progress-text {
@@ -262,7 +261,8 @@
             bottom: 0;
             width: 100%;
             border-radius: 10px;
-            transition: height 0.5s ease;
+            transition: height 2s ease-out;
+            height: 0%;
         }
 
         .group-progress-bar.normal {
@@ -279,7 +279,8 @@
             width: 100%;
             background: linear-gradient(0deg, #32CD32, #00FF00);
             border-radius: 10px;
-            transition: height 0.5s ease;
+            transition: height 2s ease-out;
+            height: 0%;
         }
 
         .group-percentage {
@@ -321,7 +322,6 @@
             gap: 15px;
             margin-bottom: 40px;
             padding-bottom: 25px;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
         }
 
         .title-box .total-amount {
@@ -338,7 +338,7 @@
             position: relative;
             width: 120px;
             height: 40px;
-            background: #6a1b3d;
+            background: #4a0e2e;
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -346,7 +346,7 @@
         }
 
         .annual-mode .toggle-switch {
-            background: #654321;
+            background: #3c2415;
         }
 
         .toggle-slider {
@@ -411,7 +411,7 @@
         <div class="top-row">
             <div class="title-box">
                 <div class="title-content">
-                    <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo" style="width: 130px !important; height: 130px !important;">
+                    <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo">
                     <div class="title-and-toggle">
                         <h1 class="title">מעקב גיוס כספים</h1>
                         <div class="toggle-container" style="border-bottom: none !important; padding-bottom: 0 !important;">
@@ -429,9 +429,7 @@
                 
                 <div class="main-progress">
                     <div class="main-progress-bar" id="mainProgressBar">
-                        <div class="main-progress-fill" id="mainProgressFill">
-                            <div class="main-progress-text" id="mainProgressText">0%</div>
-                        </div>
+                        <div class="main-progress-text" id="mainProgressText">0%</div>
                     </div>
                 </div>
             </div>
@@ -444,10 +442,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="bottom-row">
-            <!-- התיבה הזו לא נדרשת יותר -->
         </div>
 
         <div class="gabbaim-section">
@@ -483,6 +477,26 @@
 
         let isAnnual = false;
 
+        // פונקציה לאנימציה של מספרים
+        function animateNumber(element, target, duration) {
+            let start = 0;
+            const startTime = performance.now();
+            
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const current = Math.round(start + (target - start) * progress);
+                element.textContent = current + '%';
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
+        }
+
         function togglePeriod() {
             const toggle = document.getElementById('periodToggle');
             const slider = document.getElementById('toggleSlider');
@@ -500,18 +514,10 @@
                 body.classList.remove('annual-mode');
             }
             
-            // עדכן את כל הנתונים
+            // עדכן את כל הנתונים עם אנימציות
             updateMainProgress();
             updateGroups();
             updateRepresentatives();
-        }
-
-        function updateDataForAnnual() {
-            console.log('עבר למצב שנתי');
-        }
-
-        function updateDataForMonthly() {
-            console.log('עבר למצב חודשי');
         }
 
         // שמות הקבוצות
@@ -546,10 +552,19 @@
             const totalAmount = document.getElementById('totalAmount');
             const targetInfo = document.querySelector('.target-info');
             
-            progressBar.style.width = `${Math.min(percentage, 100)}%`;
-            progressText.textContent = `${percentage}%`;
+            // איפוס לאנימציה
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            // עדכון טקסטים
             totalAmount.textContent = `${data.totalRaised.toLocaleString()} ש"ח`;
             targetInfo.textContent = `מתוך יעד של ${data.totalTarget.toLocaleString()} ש"ח`;
+            
+            // אנימציה של הבר הראשי
+            setTimeout(() => {
+                progressBar.style.width = `${Math.min(percentage, 100)}%`;
+                animateNumber(progressText, percentage, 3000);
+            }, 500);
         }
 
         function updateGroups() {
@@ -572,22 +587,42 @@
                     const exceededHeight = Math.min(exceededPercentage, 100);
                     
                     progressHTML = `
-                        <div class="group-progress-bar normal" style="height: 100%"></div>
-                        <div class="progress-exceeded" style="height: ${exceededHeight}%"></div>
+                        <div class="group-progress-bar normal" style="height: 0%"></div>
+                        <div class="progress-exceeded" style="height: 0%"></div>
                     `;
                 } else {
-                    progressHTML = `<div class="group-progress-bar normal" style="height: ${percentage}%"></div>`;
+                    progressHTML = `<div class="group-progress-bar normal" style="height: 0%"></div>`;
                 }
                 
                 groupDiv.innerHTML = `
                     <div class="group-progress">
                         ${progressHTML}
-                        <div class="group-percentage">${percentage}%</div>
+                        <div class="group-percentage">0%</div>
                     </div>
                     <div class="group-name">${name}</div>
                 `;
                 
                 container.appendChild(groupDiv);
+                
+                // אנימציה מושהית
+                setTimeout(() => {
+                    const progressBar = groupDiv.querySelector('.group-progress-bar');
+                    const exceededBar = groupDiv.querySelector('.progress-exceeded');
+                    const percentageElement = groupDiv.querySelector('.group-percentage');
+                    
+                    if (percentage > 100) {
+                        progressBar.style.height = '100%';
+                        const exceededPercentage = percentage - 100;
+                        const exceededHeight = Math.min(exceededPercentage, 100);
+                        if (exceededBar) {
+                            exceededBar.style.height = exceededHeight + '%';
+                        }
+                    } else {
+                        progressBar.style.height = percentage + '%';
+                    }
+                    
+                    animateNumber(percentageElement, percentage, 2000);
+                }, 1000 + (index * 150));
             });
         }
 
@@ -611,38 +646,50 @@
                     const exceededHeight = Math.min(exceededPercentage, 100);
                     
                     progressHTML = `
-                        <div class="group-progress-bar normal" style="height: 100%"></div>
-                        <div class="progress-exceeded" style="height: ${exceededHeight}%"></div>
+                        <div class="group-progress-bar normal" style="height: 0%"></div>
+                        <div class="progress-exceeded" style="height: 0%"></div>
                     `;
                 } else {
-                    progressHTML = `<div class="group-progress-bar normal" style="height: ${percentage}%"></div>`;
+                    progressHTML = `<div class="group-progress-bar normal" style="height: 0%"></div>`;
                 }
                 
                 repDiv.innerHTML = `
                     <div class="group-progress">
                         ${progressHTML}
-                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg);">${percentage}%</div>
+                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg);">0%</div>
                     </div>
                     <div class="group-name">${name}</div>
                 `;
                 
                 container.appendChild(repDiv);
+                
+                // אנימציה מושהית
+                setTimeout(() => {
+                    const progressBar = repDiv.querySelector('.group-progress-bar');
+                    const exceededBar = repDiv.querySelector('.progress-exceeded');
+                    const percentageElement = repDiv.querySelector('.group-percentage');
+                    
+                    if (percentage > 100) {
+                        progressBar.style.height = '100%';
+                        const exceededPercentage = percentage - 100;
+                        const exceededHeight = Math.min(exceededPercentage, 100);
+                        if (exceededBar) {
+                            exceededBar.style.height = exceededHeight + '%';
+                        }
+                    } else {
+                        progressBar.style.height = percentage + '%';
+                    }
+                    
+                    animateNumber(percentageElement, percentage, 2000);
+                }, 1000 + (index * 100));
             });
-        }
-
-        function createGroupElements() {
-            updateGroups(); // השתמש בפונקציה החדשה
-        }
-
-        function createRepresentativeElements() {
-            updateRepresentatives(); // השתמש בפונקציה החדשה
         }
 
         // אתחול
         document.addEventListener('DOMContentLoaded', function() {
             updateMainProgress();
-            createGroupElements();
-            createRepresentativeElements();
+            updateGroups();
+            updateRepresentatives();
         });
     </script>
 </body>
