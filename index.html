@@ -55,7 +55,7 @@
         .top-row {
             display: flex;
             justify-content: space-between;
-            gap: 40px;
+            gap: 20px;
             margin-bottom: 20px;
         }
 
@@ -65,7 +65,7 @@
         }
 
         .top-row .left-section {
-            flex: 0 0 auto;
+            flex: 1;
         }
 
         .title-box {
@@ -130,8 +130,8 @@
         }
 
         .left-section .content-box {
-            display: inline-block;
-            width: auto;
+            display: block;
+            width: 100%;
         }
 
         .right-section {
@@ -204,7 +204,7 @@
         }
 
         .left-section .groups-container {
-            justify-content: flex-start;
+            justify-content: center;
         }
 
         .left-section .section-title {
@@ -291,9 +291,11 @@
             left: 50%;
             transform: translateX(-50%);
             font-weight: bold;
-            font-size: 0.8em;
+            font-size: 0.9em;
             color: #000;
             z-index: 2;
+            text-align: center;
+            line-height: 1.1;
         }
 
         .group-amount {
@@ -406,6 +408,144 @@
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(255, 215, 0, 0.2);
         }
+
+        /* Responsive design למכשירים צרים */
+        @media (max-width: 768px) {
+            .top-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .top-row .title-box,
+            .top-row .left-section {
+                flex: none;
+                width: 100%;
+            }
+            
+            .logo {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            
+            .title-box .title {
+                font-size: 1.5em;
+            }
+            
+            .total-amount {
+                font-size: 2em;
+            }
+            
+            .groups-container {
+                gap: 6px;
+            }
+            
+            .group-item {
+                width: 50px;
+            }
+            
+            .group-progress {
+                width: 40px;
+                height: 200px;
+            }
+            
+            #gabbaim-container .group-item {
+                width: 30px;
+            }
+            
+            #gabbaim-container .group-progress {
+                width: 25px;
+                height: 200px;
+            }
+        }
+
+        /* Responsive design למסכים גדולים - רק במסך מלא */
+        @media (min-width: 1920px) and (min-height: 1080px) {
+            .container {
+                max-width: 1600px;
+                padding: 40px;
+            }
+            
+            .logo {
+                width: 160px !important;
+                height: 160px !important;
+            }
+            
+            .title-box .title {
+                font-size: 2.2em;
+            }
+            
+            .total-amount {
+                font-size: 3em;
+            }
+            
+            .target-info {
+                font-size: 1.4em;
+            }
+            
+            .main-progress {
+                height: 60px;
+            }
+            
+            .main-progress-text {
+                font-size: 1.3em;
+            }
+            
+            .section-title {
+                font-size: 1.8em;
+            }
+            
+            .groups-container {
+                gap: 12px;
+                padding: 20px 0;
+            }
+            
+            .group-item {
+                width: 80px;
+            }
+            
+            .group-progress {
+                width: 60px;
+                height: 300px;
+            }
+            
+            .group-name {
+                font-size: 1em;
+                height: 50px;
+            }
+            
+            .group-percentage {
+                font-size: 1.1em;
+            }
+            
+            #gabbaim-container .group-item {
+                width: 45px;
+            }
+            
+            #gabbaim-container .group-progress {
+                width: 35px;
+                height: 300px;
+            }
+            
+            #gabbaim-container .group-name {
+                font-size: 0.8em;
+                height: 40px;
+            }
+            
+            .toggle-switch {
+                width: 140px;
+                height: 45px;
+            }
+            
+            .toggle-slider {
+                width: 65px;
+                height: 39px;
+                border-radius: 20px;
+            }
+            
+            .toggle-switch.annual .toggle-slider {
+                transform: translateX(69px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -462,7 +602,7 @@
             totalTarget: 8000,
             groupTarget: 1000,
             totalRaised: 5000,
-            groupAmounts: [750, 600, 650, 1200, 500, 700, 550, 450],
+            groupAmounts: [750, 600, 650, 1200, 500, 700],
             representativeAmounts: [320, 280, 150, 380, 220, 190, 310, 170, 260, 340, 200, 240, 160, 290, 180, 230, 270, 140, 210, 250],
             repTarget: 250
         };
@@ -472,7 +612,7 @@
             totalTarget: 96000,
             groupTarget: 12000,
             totalRaised: 60000,
-            groupAmounts: [9000, 7200, 7800, 14400, 6000, 8400, 6600, 5400],
+            groupAmounts: [9000, 7200, 7800, 14400, 6000, 8400],
             representativeAmounts: [3840, 3360, 1800, 4560, 2640, 2280, 3720, 2040, 3120, 4080, 2400, 2880, 1920, 3480, 2160, 2760, 3240, 1680, 2520, 3000],
             repTarget: 3000
         };
@@ -480,7 +620,7 @@
         let isAnnual = false;
 
         // פונקציה לאנימציה של מספרים
-        function animateNumber(element, target, duration) {
+        function animateNumber(element, target, duration, isAmount = false) {
             let start = 0;
             const startTime = performance.now();
             
@@ -489,7 +629,11 @@
                 const progress = Math.min(elapsed / duration, 1);
                 
                 const current = Math.round(start + (target - start) * progress);
-                element.textContent = current + '%';
+                if (isAmount) {
+                    element.textContent = current.toLocaleString() + ' ₪';
+                } else {
+                    element.textContent = current + '%';
+                }
                 
                 if (progress < 1) {
                     requestAnimationFrame(updateNumber);
@@ -529,9 +673,7 @@
             'זכרון רפאל',
             'בית פנחס',
             'שיכון ה\'',
-            'בעזא 1',
-            'רמת אלחנן',
-            'שטיבל אברכים'
+            'רמת אלחנן'
         ];
 
         // שמות הנציגים (20 נציגים)
@@ -599,7 +741,7 @@
                 groupDiv.innerHTML = `
                     <div class="group-progress">
                         ${progressHTML}
-                        <div class="group-percentage">0%</div>
+                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;">0 ₪</div>
                     </div>
                     <div class="group-name">${name}</div>
                 `;
@@ -623,7 +765,7 @@
                         progressBar.style.height = percentage + '%';
                     }
                     
-                    animateNumber(percentageElement, percentage, 2000);
+                    animateNumber(percentageElement, amount, 2000, true);
                 }, 1000 + (index * 150));
             });
         }
@@ -658,7 +800,7 @@
                 repDiv.innerHTML = `
                     <div class="group-progress">
                         ${progressHTML}
-                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg);">0%</div>
+                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); font-size: 1em; white-space: nowrap;">0 ₪</div>
                     </div>
                     <div class="group-name">${name}</div>
                 `;
@@ -682,7 +824,7 @@
                         progressBar.style.height = percentage + '%';
                     }
                     
-                    animateNumber(percentageElement, percentage, 2000);
+                    animateNumber(percentageElement, amount, 2000, true);
                 }, 1000 + (index * 100));
             });
         }
