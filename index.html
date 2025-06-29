@@ -324,8 +324,8 @@
             align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 40px;
-            padding-bottom: 25px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
         }
 
         .title-box .total-amount {
@@ -399,6 +399,16 @@
             color: rgba(255, 215, 0, 0.5);
         }
 
+        /* סגנון לתצוגת התאריך */
+        .period-date {
+            font-size: 1.1em;
+            color: #FFD700;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            margin-top: -10px;
+        }
+
         .section-title {
             font-size: 1.5em;
             margin: 0 0 15px 0;
@@ -455,6 +465,10 @@
             #gabbaim-container .group-progress {
                 width: 25px;
                 height: 200px;
+            }
+
+            .period-date {
+                font-size: 1em;
             }
         }
 
@@ -545,6 +559,10 @@
             .toggle-switch.annual .toggle-slider {
                 transform: translateX(69px);
             }
+
+            .period-date {
+                font-size: 1.3em;
+            }
         }
     </style>
 </head>
@@ -556,6 +574,7 @@
                     <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo">
                     <div class="title-and-toggle">
                         <h1 class="title">מעקב גיוס כספים</h1>
+                        <div class="period-date" id="periodDate">חודש אייר תשפ״ה</div>
                         <div class="toggle-container" style="border-bottom: none !important; padding-bottom: 0 !important;">
                             <div class="toggle-switch" id="periodToggle" onclick="togglePeriod()">
                                 <div class="toggle-text left">חודשי</div>
@@ -566,8 +585,8 @@
                     </div>
                 </div>
                 
-                <div class="total-amount" id="totalAmount">5,000 ש"ח</div>
-                <div class="target-info">מתוך יעד של 8,000 ש"ח</div>
+                <div class="total-amount" id="totalAmount">5000 ש"ח</div>
+                <div class="target-info">מתוך יעד של 8000 ש"ח</div>
                 
                 <div class="main-progress">
                     <div class="main-progress-bar" id="mainProgressBar">
@@ -603,7 +622,7 @@
             groupTarget: 1000,
             totalRaised: 5000,
             groupAmounts: [750, 600, 650, 1200, 500, 700],
-            representativeAmounts: [320, 280, 150, 380, 220, 190, 310, 170, 260, 340, 200, 240, 160, 290, 180, 230, 270, 140, 210, 250],
+            representativeAmounts: [320, 280, 150, 380, 220, 190, 310, 170, 260, 340, 200, 240, 160, 290, 180, 230, 270, 140, 210, 250, 0, 0, 0],
             repTarget: 250
         };
 
@@ -613,7 +632,7 @@
             groupTarget: 12000,
             totalRaised: 60000,
             groupAmounts: [9000, 7200, 7800, 14400, 6000, 8400],
-            representativeAmounts: [3840, 3360, 1800, 4560, 2640, 2280, 3720, 2040, 3120, 4080, 2400, 2880, 1920, 3480, 2160, 2760, 3240, 1680, 2520, 3000],
+            representativeAmounts: [3840, 3360, 1800, 4560, 2640, 2280, 3720, 2040, 3120, 4080, 2400, 2880, 1920, 3480, 2160, 2760, 3240, 1680, 2520, 3000, 3600, 2640, 2160],
             repTarget: 3000
         };
 
@@ -647,6 +666,7 @@
             const toggle = document.getElementById('periodToggle');
             const slider = document.getElementById('toggleSlider');
             const body = document.body;
+            const periodDate = document.getElementById('periodDate');
             
             isAnnual = !isAnnual;
             
@@ -654,10 +674,12 @@
                 toggle.classList.add('annual');
                 slider.textContent = 'שנתי';
                 body.classList.add('annual-mode');
+                periodDate.textContent = 'שנת תשפ"ה';
             } else {
                 toggle.classList.remove('annual');
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
+                periodDate.textContent = 'חודש אייר תשפ"ה';
             }
             
             // עדכן את כל הנתונים עם אנימציות
@@ -676,12 +698,13 @@
             'רמת אלחנן'
         ];
 
-        // שמות הנציגים (20 נציגים)
+        // שמות הנציגים (23 נציגים)
         const representatives = [
             'אברהם כהן', 'יצחק לוי', 'יעקב מרדכי', 'משה דוד', 'אהרן יוסף',
             'שמואל חיים', 'דניאל אליעזר', 'נתן יהודה', 'רפאל מאיר', 'גבריאל שמעון',
             'עמנואל צבי', 'יחיאל ברוך', 'אלעזר נפתלי', 'בנימין אשר', 'זבולון גד',
-            'יהושע ראובן', 'כלב שמשון', 'פנחס אליהו', 'אלקנה אברם', 'יונתן שלמה'
+            'יהושע ראובן', 'כלב שמשון', 'פנחס אליהו', 'אלקנה אברם', 'יונתן שלמה',
+            'אליהו אברהם', 'חנניה יעקב', 'מתתיהו דוד'
         ];
 
         function getCurrentData() {
