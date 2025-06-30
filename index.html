@@ -574,7 +574,7 @@
                     <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo">
                     <div class="title-and-toggle">
                         <h1 class="title">מעקב גיוס כספים</h1>
-                        <div class="period-date" id="periodDate">חודש אייר תשפ״ה</div>
+                        <div class="period-date" id="periodDate">חודש אייר תשפ"ה</div>
                         <div class="toggle-container" style="border-bottom: none !important; padding-bottom: 0 !important;">
                             <div class="toggle-switch" id="periodToggle" onclick="togglePeriod()">
                                 <div class="toggle-text left">חודשי</div>
@@ -585,8 +585,8 @@
                     </div>
                 </div>
                 
-                <div class="total-amount" id="totalAmount">7175 ש"ח</div>
-                <div class="target-info">מתוך יעד של 5000 ש"ח</div>
+                <div class="total-amount" id="totalAmount">5000 ש"ח</div>
+                <div class="target-info">מתוך יעד של 8000 ש"ח</div>
                 
                 <div class="main-progress">
                     <div class="main-progress-bar" id="mainProgressBar">
@@ -621,8 +621,23 @@
             totalTarget: 8000,
             groupTarget: 1000,
             totalRaised: 5000,
-            groupAmounts: [2100, 1877, 1225, 945, 550, 478],
-            representativeAmounts: [589, 550, 478, 458, 450, 425, 412, 350, 350, 350, 350, 350, 326, 321, 280, 259, 250, 211, 207, 99, 99, 89],
+            groupNames: [
+                'בעלזא 5',
+                'בן יעקב', 
+                'זכרון רפאל',
+                'בית פנחס',
+                'שיכון ה\'',
+                'רמת אלחנן'
+            ],
+            groupAmounts: [800, 1200, 600, 900, 700, 800],
+            representatives: [
+                'אברהם כהן', 'יצחק לוי', 'יעקב מרדכי', 'משה דוד', 'אהרן יוסף',
+                'שמואל חיים', 'דניאל אליעזר', 'נתן יהודה', 'רפאל מאיר', 'גבריאל שמעון',
+                'עמנואל צבי', 'יחיאל ברוך', 'אלעזר נפתלי', 'בנימין אשר', 'זבולון גד',
+                'יהושע ראובן', 'כלב שמשון', 'פנחס אליהו', 'אלקנה אברם', 'יונתן שלמה',
+                'אליהו אברהם', 'חנניה יעקב', 'מתתיהו דוד'
+            ],
+            representativeAmounts: [200, 300, 150, 250, 180, 320, 100, 280, 220, 190, 350, 240, 160, 210, 270, 300, 180, 200, 250, 190, 220, 280, 170],
             repTarget: 500
         };
 
@@ -631,39 +646,27 @@
             totalTarget: 96000,
             groupTarget: 12000,
             totalRaised: 60000,
-            groupAmounts: [4200, 3754, 2450, 1890, 1100, 956],
-            representativeAmounts: [1178, 1100, 956, 916, 900, 850, 824, 700, 700, 700, 700, 700, 652, 642, 560, 518, 500, 422, 414, 198, 178, 42 ],
+            groupNames: [
+                'בעלזא הגדול',
+                'בן יעקב הרחב', 
+                'זכרון רפאל המרכזי',
+                'בית פנחס העתיק',
+                'שיכון ה\' החדש',
+                'רמת אלחנן הגבוה'
+            ],
+            groupAmounts: [9000, 7200, 7800, 14400, 6000, 8400],
+            representatives: [
+                'ר\' אברהם כהן', 'ר\' יצחק לוי', 'ר\' יעקב מרדכי', 'ר\' משה דוד', 'ר\' אהרן יוסף',
+                'ר\' שמואל חיים', 'ר\' דניאל אליעזר', 'ר\' נתן יהודה', 'ר\' רפאל מאיר', 'ר\' גבריאל שמעון',
+                'ר\' עמנואל צבי', 'ר\' יחיאל ברוך', 'ר\' אלעזר נפתלי', 'ר\' בנימין אשר', 'ר\' זבולון גד',
+                'ר\' יהושע ראובן', 'ר\' כלב שמשון', 'ר\' פנחס אליהו', 'ר\' אלקנה אברם', 'ר\' יונתן שלמה',
+                'ר\' אליהו אברהם', 'ר\' חנניה יעקב', 'ר\' מתתיהו דוד'
+            ],
+            representativeAmounts: [2400, 3600, 1800, 3000, 2160, 3840, 1200, 3360, 2640, 2280, 4200, 2880, 1920, 2520, 3240, 3600, 2160, 2400, 3000, 2280, 2640, 3360, 2040],
             repTarget: 3000
         };
 
         let isAnnual = false;
-
-        // שמות השטיבלעך - חודשי
-        const monthlyGroupNames = [
-            'בית פנחס',
-            'בעלזא 5', 
-            'זכרון רפאל',
-            'בן יעקב',
-            'שיכון ה'',
-            'רמת אלחנן'
-        ];
-
-        // שמות השטיבלעך - שנתי
-        const annualGroupNames = [
-            'בית פנחס',
-            'בעלזא 5',
-            'זכרון רפאל',
-            'בן יעקב',
-            'שיכון ה'',
-            'רמת אלחנן'
-        ];
-
-        // שמות הנציגים - חודשי
-        const monthlyRepresentatives = ['הרב בן ציון לוי', 'הרב שלמה מאיר קליין', 'הרב שלום פנט', 'הרב מיכאל שמוטץ', 'הרב חיים צבי גלנדאור', 'הרב דוד מנדל', 'הרב צימרמן חיים שלום', 'הרב אברהם כהנא', 'הרב חיים נח אלבום', 'הרב חיים פרידמן', 'הרב מתתיהו קרייזמן', 'הרב שמואל יעקב פירר', 'הרב משה הורביץ', 'הרב ישראל יצחק פלדמן', 'הרב זיכרמן יוסף אריה', 'הרב יוסף שוורץ', 'הרב פנחס מנדל', 'הרב הלל רויטמן', 'הרב יעקב פרישמן', 'הרב צבי יוסף לנדאו', 'הרב שמעון יחזקאל ווייס', 'הרב ישראל פרידמן'
-        ];
-
-        // שמות הנציגים - שנתי
-        const annualRepresentatives = ['הרב בן ציון לוי', 'הרב שלמה מאיר קליין', 'הרב שלום פנט', 'הרב מיכאל שמוטץ', 'הרב חיים צבי גלנדאור', 'הרב דוד מנדל', 'הרב צימרמן חיים שלום', 'הרב אברהם כהנא', 'הרב חיים נח אלבום', 'הרב חיים פרידמן', 'הרב מתתיהו קרייזמן', 'הרב שמואל יעקב פירר', 'הרב משה הורביץ', 'הרב ישראל יצחק פלדמן', 'הרב זיכרמן יוסף אריה', 'הרב יוסף שוורץ', 'הרב פנחס מנדל', 'הרב הלל רויטמן', 'הרב יעקב פרישמן', 'הרב צבי יוסף לנדאו', 'הרב שמעון יחזקאל ווייס', 'הרב ישראל פרידמן'       ];
 
         // פונקציה לאנימציה של מספרים
         function animateNumber(element, target, duration, isAmount = false) {
@@ -701,12 +704,12 @@
                 toggle.classList.add('annual');
                 slider.textContent = 'שנתי';
                 body.classList.add('annual-mode');
-                periodDate.textContent = 'שנת תשפ״ה';
+                periodDate.textContent = 'שנת תשפ"ה';
             } else {
                 toggle.classList.remove('annual');
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
-                periodDate.textContent = 'חודש אייר תשפ״ה';
+                periodDate.textContent = 'חודש אייר תשפ"ה';
             }
             
             // עדכן את כל הנתונים עם אנימציות
@@ -717,14 +720,6 @@
 
         function getCurrentData() {
             return isAnnual ? annualData : monthlyData;
-        }
-
-        function getCurrentGroupNames() {
-            return isAnnual ? annualGroupNames : monthlyGroupNames;
-        }
-
-        function getCurrentRepresentatives() {
-            return isAnnual ? annualRepresentatives : monthlyRepresentatives;
         }
 
         function updateMainProgress() {
@@ -753,17 +748,75 @@
         function updateGroups() {
             const container = document.getElementById('shtiblech-container');
             const data = getCurrentData();
-            const groupNames = getCurrentGroupNames();
             
             // נקה את התוכן הקיים
             container.innerHTML = '';
             
-            groupNames.forEach((name, index) => {
+            data.groupNames.forEach((name, index) => {
                 const amount = data.groupAmounts[index];
                 const percentage = Math.round((amount / data.groupTarget) * 100);
                 
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'group-item';
+                
+                let progressHTML = '';
+                if (percentage > 100) {
+                    const exceededPercentage = percentage - 100;
+                    const exceededHeight = Math.min(exceededPercentage, 100);
+                    
+                    progressHTML = `
+                        <div class="group-progress-bar normal" style="height: 0%"></div>
+                        <div class="progress-exceeded" style="height: 0%"></div>
+                    `;
+                } else {
+                    progressHTML = `<div class="group-progress-bar normal" style="height: 0%"></div>`;
+                }
+                
+                groupDiv.innerHTML = `
+                    <div class="group-progress">
+                        ${progressHTML}
+                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;">0 ₪</div>
+                    </div>
+                    <div class="group-name">${name}</div>
+                `;
+                
+                container.appendChild(groupDiv);
+                
+                // אנימציה מושהית
+                setTimeout(() => {
+                    const progressBar = groupDiv.querySelector('.group-progress-bar');
+                    const exceededBar = groupDiv.querySelector('.progress-exceeded');
+                    const percentageElement = groupDiv.querySelector('.group-percentage');
+                    
+                    if (percentage > 100) {
+                        progressBar.style.height = '100%';
+                        const exceededPercentage = percentage - 100;
+                        const exceededHeight = Math.min(exceededPercentage, 100);
+                        if (exceededBar) {
+                            exceededBar.style.height = exceededHeight + '%';
+                        }
+                    } else {
+                        progressBar.style.height = percentage + '%';
+                    }
+                    
+                    animateNumber(percentageElement, amount, 2000, true);
+                }, 1000 + (index * 150));
+            });
+        }
+
+        function updateRepresentatives() {
+            const container = document.getElementById('gabbaim-container');
+            const data = getCurrentData();
+            
+            // נקה את התוכן הקיים
+            container.innerHTML = '';
+            
+            data.representatives.forEach((name, index) => {
+                const amount = data.representativeAmounts[index];
+                const percentage = Math.round((amount / data.repTarget) * 100);
+                
+                const repDiv = document.createElement('div');
+                repDiv.className = 'group-item';
                 
                 let progressHTML = '';
                 if (percentage > 100) {
@@ -809,73 +862,3 @@
                 }, 1000 + (index * 100));
             });
         }
-
-        // אתחול
-        document.addEventListener('DOMContentLoaded', function() {
-            updateMainProgress();
-            updateGroups();
-            updateRepresentatives();
-        });
-    </script>
-</body>
-</html>
-                        <div class="group-progress-bar normal" style="height: 0%"></div>
-                        <div class="progress-exceeded" style="height: 0%"></div>
-                    `;
-                } else {
-                    progressHTML = `<div class="group-progress-bar normal" style="height: 0%"></div>`;
-                }
-                
-                groupDiv.innerHTML = `
-                    <div class="group-progress">
-                        ${progressHTML}
-                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;">0 ₪</div>
-                    </div>
-                    <div class="group-name">${name}</div>
-                `;
-                
-                container.appendChild(groupDiv);
-                
-                // אנימציה מושהית
-                setTimeout(() => {
-                    const progressBar = groupDiv.querySelector('.group-progress-bar');
-                    const exceededBar = groupDiv.querySelector('.progress-exceeded');
-                    const percentageElement = groupDiv.querySelector('.group-percentage');
-                    
-                    if (percentage > 100) {
-                        progressBar.style.height = '100%';
-                        const exceededPercentage = percentage - 100;
-                        const exceededHeight = Math.min(exceededPercentage, 100);
-                        if (exceededBar) {
-                            exceededBar.style.height = exceededHeight + '%';
-                        }
-                    } else {
-                        progressBar.style.height = percentage + '%';
-                    }
-                    
-                    animateNumber(percentageElement, amount, 2000, true);
-                }, 1000 + (index * 150));
-            });
-        }
-
-        function updateRepresentatives() {
-            const container = document.getElementById('gabbaim-container');
-            const data = getCurrentData();
-            const representatives = getCurrentRepresentatives();
-            
-            // נקה את התוכן הקיים
-            container.innerHTML = '';
-            
-            representatives.forEach((name, index) => {
-                const amount = data.representativeAmounts[index];
-                const percentage = Math.round((amount / data.repTarget) * 100);
-                
-                const repDiv = document.createElement('div');
-                repDiv.className = 'group-item';
-                
-                let progressHTML = '';
-                if (percentage > 100) {
-                    const exceededPercentage = percentage - 100;
-                    const exceededHeight = Math.min(exceededPercentage, 100);
-                    
-                    progressHTML = `
