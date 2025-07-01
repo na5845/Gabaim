@@ -1014,17 +1014,28 @@
             
             isAnnual = !isAnnual;
             
+            console.log(`🔄 מחליף למצב: ${isAnnual ? 'שנתי' : 'חודשי'}`);
+            
             if (isAnnual) {
                 toggle.classList.add('annual');
                 slider.textContent = 'שנתי';
                 body.classList.add('annual-mode');
-                periodDate.textContent = 'שנת תשפ״ה';
+                if (periodDate) {
+                    periodDate.textContent = 'שנת תשפ״ה';
+                    console.log(`📅 החלפתי לשנתי: שנת תשפ״ה`);
+                }
             } else {
                 toggle.classList.remove('annual');
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
                 // השתמש בחודש השמור
-                periodDate.textContent = `חודש ${currentHebrewMonth} תשפ״ה`;
+                if (periodDate && currentHebrewMonth) {
+                    periodDate.textContent = `חודש ${currentHebrewMonth} תשפ״ה`;
+                    console.log(`📅 חזרתי לחודשי: חודש ${currentHebrewMonth} תשפ״ה`);
+                } else {
+                    periodDate.textContent = 'טוען חודש...';
+                    console.log(`⚠️ אין חודש שמור, מציג טוען חודש...`);
+                }
             }
             
             updateMainProgress();
