@@ -396,6 +396,28 @@
             margin: 20px 0;
         }
 
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
         .error {
             text-align: center;
             color: #ff6b6b;
@@ -476,7 +498,10 @@
     <div class="container">
         <div class="loading" id="loadingIndicator">
             מגלה ומנתח את הגיליונות שלך...<br>
-            <small>זה עלול לקחת כמה שניות</small>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">מכין להתחלה...</div>
         </div>
         
         <div class="debug-info" id="debugInfo"></div>
@@ -487,7 +512,7 @@
                     <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo">
                     <div class="title-and-toggle">
                         <h1 class="title">מעקב גיוס כספים</h1>
-                        <div class="period-date" id="periodDate">חודש טבת תשפ״ה</div>
+                        <div class="period-date" id="periodDate">טוען חודש...</div>
                         <div class="toggle-container" style="border-bottom: none !important; padding-bottom: 0 !important;">
                             <div class="toggle-switch" id="periodToggle" onclick="togglePeriod()">
                                 <div class="toggle-text left">חודשי</div>
@@ -548,6 +573,8 @@
 
         let isAnnual = false;
         let discoveredSheets = {};
+        let cachedData = null; // שמירת נתונים בזיכרון
+        let currentHebrewMonth = 'טבת'; // שמירת החודש העברי
         let currentData = {
             monthly: { total: 0, shtiblech: {}, gabbaim: {} },
             annual: { total: 0, shtiblech: {}, gabbaim: {} }
@@ -579,7 +606,7 @@
             return null;
         }
 
-        // קבלת החודש העברי הנוכחי (חודש קודם)
+        // קבלת החודש העברי הנוכחי (חודש קודם) - עם debug מפורט
         async function getCurrentHebrewMonth() {
             try {
                 const now = new Date();
@@ -588,11 +615,19 @@
                 const month = lastMonth.getMonth() + 1;
                 
                 const url = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=1&g2h=1`;
+                console.log(`🌐 מתחבר ל-API: ${url}`);
+                updateDebug(`מתחבר ל-API: ${url}`);
+                
                 const response = await fetch(url);
+                console.log(`📡 תגובת API: ${response.status}`);
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(`📊 נתונים מה-API:`, data);
+                    updateDebug(`נתונים מה-API: ${JSON.stringify(data)}`);
+                    
                     const englishMonth = data.hm; // החודש העברי באנגלית
+                    console.log(`📅 חודש באנגלית: ${englishMonth}`);
                     
                     // מיפוי מאנגלית לעברית
                     const monthMapping = {
@@ -613,14 +648,17 @@
                     };
                     
                     const hebrewMonth = monthMapping[englishMonth] || englishMonth;
-                    console.log(`חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
+                    console.log(`✅ חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
+                    updateDebug(`חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
                     return hebrewMonth;
                 } else {
-                    // חזור לחישוב פשוט במקרה של שגיאה
+                    console.log(`❌ שגיאה ב-API: ${response.status}`);
+                    updateDebug(`שגיאה ב-API: ${response.status}`);
                     return 'טבת';
                 }
             } catch (error) {
-                console.log('שגיאה בקבלת חודש עברי, משתמש בחודש ברירת מחדל');
+                console.log('❌ שגיאה בקבלת חודש עברי:', error);
+                updateDebug(`שגיאה בקבלת חודש עברי: ${error.message}`);
                 return 'טבת';
             }
         }
@@ -739,44 +777,81 @@
             return fields;
         }
 
-        // גילוי וניתוח כל הגיליונות
+        // עדכון בר התקדמות
+        function updateProgress(current, total, message) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            if (progressBar && progressText) {
+                const percentage = Math.round((current / total) * 100);
+                progressBar.style.width = percentage + '%';
+                progressText.textContent = message;
+            }
+        }
+
+        // גילוי וניתוח כל הגיליונות - גרסה מהירה עם cache
         async function discoverAllSheets() {
             console.log('מתחיל לגלות גיליונות...');
             updateDebug('מתחיל לגלות גיליונות...');
+            updateProgress(0, MAX_SHEETS_TO_CHECK + 1, 'מתחיל סריקה...');
+            
+            // אם יש נתונים שמורים, השתמש בהם
+            if (cachedData) {
+                console.log('משתמש בנתונים שמורים מהזיכרון');
+                updateProgress(MAX_SHEETS_TO_CHECK + 1, MAX_SHEETS_TO_CHECK + 1, 'משתמש בנתונים שמורים');
+                return cachedData;
+            }
             
             const sheets = {};
             let rawDataSheet = null;
             
-            // בדוק גיליונות מ-0 עד MAX_SHEETS_TO_CHECK
+            // בדוק גיליונות מ-0 עד MAX_SHEETS_TO_CHECK - בלי המתנה!
+            const promises = [];
             for (let gid = 0; gid < MAX_SHEETS_TO_CHECK; gid++) {
-                updateDebug(`בודק גיליון GID ${gid}...`);
-                
-                const csvData = await tryFetchSheetByGID(gid);
-                if (csvData) {
-                    const analysis = analyzeSheetType(csvData, gid);
-                    console.log(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
-                    updateDebug(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
-                    
-                    if (analysis.type !== 'unknown' && analysis.data) {
-                        sheets[analysis.type] = analysis.data;
+                promises.push(
+                    tryFetchSheetByGID(gid).then(csvData => {
+                        updateProgress(gid + 1, MAX_SHEETS_TO_CHECK + 1, `בודק גיליון ${gid + 1}/${MAX_SHEETS_TO_CHECK}`);
+                        updateDebug(`בודק גיליון GID ${gid}...`);
                         
-                        if (analysis.type === 'raw_data') {
-                            rawDataSheet = analysis.data;
+                        if (csvData) {
+                            const analysis = analyzeSheetType(csvData, gid);
+                            console.log(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
+                            updateDebug(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
+                            return { gid, analysis };
                         }
+                        return null;
+                    })
+                );
+            }
+            
+            // חכה לכל הבדיקות במקביל
+            const results = await Promise.all(promises);
+            
+            // עבד את התוצאות
+            for (const result of results) {
+                if (result && result.analysis.type !== 'unknown' && result.analysis.data) {
+                    sheets[result.analysis.type] = result.analysis.data;
+                    
+                    if (result.analysis.type === 'raw_data') {
+                        rawDataSheet = result.analysis.data;
                     }
                 }
-                
-                // המתן קצר בין בקשות
-                await new Promise(resolve => setTimeout(resolve, 200));
             }
+            
+            updateProgress(MAX_SHEETS_TO_CHECK, MAX_SHEETS_TO_CHECK + 1, 'מחשב סיכומים...');
             
             // אם לא מצאנו גיליונות מסוכמים אבל יש נתונים גולמיים, חשב בעצמך
             if (rawDataSheet && Object.keys(sheets).length === 1) {
                 console.log('מחשב סיכומים מהנתונים הגולמיים...');
                 updateDebug('מחשב סיכומים מהנתונים הגולמיים...');
-                const computed = await computeFromRawData(rawDataSheet); // הוספתי await כאן!
+                const computed = await computeFromRawData(rawDataSheet);
                 Object.assign(sheets, computed);
             }
+            
+            updateProgress(MAX_SHEETS_TO_CHECK + 1, MAX_SHEETS_TO_CHECK + 1, 'השלמת עיבוד הנתונים');
+            
+            // שמור בזיכרון
+            cachedData = sheets;
             
             updateDebug(`סה"כ נמצאו ${Object.keys(sheets).length} גיליונות מועילים`);
             console.log('גיליונות שנמצאו:', Object.keys(sheets));
@@ -835,7 +910,28 @@
             return result;
         }
 
-        // עדכון מידע דיבוג
+        // בדיקה מהירה לשינויים (רק גיליון ראשון)
+        async function checkForChanges() {
+            try {
+                const csvData = await tryFetchSheetByGID(0);
+                if (csvData) {
+                    // בדוק אם הנתונים שונים מהפעם הקודמת
+                    const currentHash = csvData.length + csvData.substring(0, 100);
+                    
+                    if (!cachedData.lastHash || cachedData.lastHash !== currentHash) {
+                        console.log('זוהו שינויים, מרענן נתונים...');
+                        cachedData = null; // נקה cache
+                        return true;
+                    }
+                    
+                    cachedData.lastHash = currentHash;
+                }
+                return false;
+            } catch (error) {
+                console.log('שגיאה בבדיקת שינויים:', error);
+                return false;
+            }
+        }
         function updateDebug(message) {
             const debugElement = document.getElementById('debugInfo');
             debugElement.innerHTML += message + '<br>';
@@ -918,19 +1014,28 @@
             
             isAnnual = !isAnnual;
             
+            console.log(`🔄 מחליף למצב: ${isAnnual ? 'שנתי' : 'חודשי'}`);
+            
             if (isAnnual) {
                 toggle.classList.add('annual');
                 slider.textContent = 'שנתי';
                 body.classList.add('annual-mode');
-                periodDate.textContent = 'שנת תשפ״ה';
+                if (periodDate) {
+                    periodDate.textContent = 'שנת תשפ״ה';
+                    console.log(`📅 החלפתי לשנתי: שנת תשפ״ה`);
+                }
             } else {
                 toggle.classList.remove('annual');
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
-                // נקבל את החודש הנכון
-                getCurrentHebrewMonth().then(month => {
-                    periodDate.textContent = `חודש ${month} תשפ״ה`;
-                });
+                // השתמש בחודש השמור
+                if (periodDate && currentHebrewMonth) {
+                    periodDate.textContent = `חודש ${currentHebrewMonth} תשפ״ה`;
+                    console.log(`📅 חזרתי לחודשי: חודש ${currentHebrewMonth} תשפ״ה`);
+                } else {
+                    periodDate.textContent = 'טוען חודש...';
+                    console.log(`⚠️ אין חודש שמור, מציג טוען חודש...`);
+                }
             }
             
             updateMainProgress();
