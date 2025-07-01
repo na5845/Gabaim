@@ -53,10 +53,6 @@
             background: #654321;
         }
 
-        .header {
-            display: none;
-        }
-
         .top-row {
             display: flex;
             justify-content: space-between;
@@ -115,13 +111,6 @@
             background-clip: text;
         }
 
-        .content-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 50px;
-        }
-
         .content-box {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
@@ -137,11 +126,6 @@
         .left-section .content-box {
             display: block;
             width: 100%;
-        }
-
-        .right-section {
-            width: 400px;
-            text-align: center;
         }
 
         .gabbaim-section {
@@ -276,10 +260,6 @@
             background: linear-gradient(0deg, #FFD700, #FFA500);
         }
 
-        .group-progress-bar.exceeded {
-            background: linear-gradient(0deg, #FFD700 0%, #FFA500 100%, #32CD32 100%);
-        }
-
         .progress-exceeded {
             position: absolute;
             bottom: 0;
@@ -303,17 +283,6 @@
             line-height: 1.1;
         }
 
-        .group-amount {
-            font-size: 0.8em;
-            color: #ccc;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .celebration {
-            /* הסרתי את האנימציה */
-        }
-
         .title {
             font-size: 2em;
             margin-bottom: 10px;
@@ -335,12 +304,6 @@
 
         .title-box .total-amount {
             margin-top: 20px;
-        }
-
-        .toggle-label {
-            font-size: 1.2em;
-            color: #FFD700;
-            font-weight: bold;
         }
 
         .toggle-switch {
@@ -404,7 +367,6 @@
             color: rgba(255, 215, 0, 0.5);
         }
 
-        /* סגנון לתצוגת התאריך */
         .period-date {
             font-size: 1.1em;
             color: #FFD700;
@@ -424,7 +386,6 @@
             border-bottom: 1px solid rgba(255, 215, 0, 0.2);
         }
 
-        /* הודעת טעינה */
         .loading {
             text-align: center;
             color: #FFD700;
@@ -439,7 +400,22 @@
             margin: 20px 0;
         }
 
-        /* Responsive design למכשירים צרים */
+        .debug-info {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: #ccc;
+            text-align: left;
+            display: none;
+        }
+
+        .debug-info.show {
+            display: block;
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
             .top-row {
                 flex-direction: column;
@@ -491,104 +467,16 @@
                 font-size: 1em;
             }
         }
-
-        /* Responsive design למסכים גדולים - רק במסך מלא */
-        @media (min-width: 1920px) and (min-height: 1080px) {
-            .container {
-                max-width: 1600px;
-                padding: 40px;
-            }
-            
-            .logo {
-                width: 160px !important;
-                height: 160px !important;
-            }
-            
-            .title-box .title {
-                font-size: 2.2em;
-            }
-            
-            .total-amount {
-                font-size: 3em;
-            }
-            
-            .target-info {
-                font-size: 1.4em;
-            }
-            
-            .main-progress {
-                height: 60px;
-            }
-            
-            .main-progress-text {
-                font-size: 1.3em;
-            }
-            
-            .section-title {
-                font-size: 1.8em;
-            }
-            
-            .groups-container {
-                gap: 12px;
-                padding: 20px 0;
-            }
-            
-            .group-item {
-                width: 80px;
-            }
-            
-            .group-progress {
-                width: 60px;
-                height: 300px;
-            }
-            
-            .group-name {
-                font-size: 1em;
-                height: 50px;
-            }
-            
-            .group-percentage {
-                font-size: 1.1em;
-            }
-            
-            #gabbaim-container .group-item {
-                width: 45px;
-            }
-            
-            #gabbaim-container .group-progress {
-                width: 35px;
-                height: 300px;
-            }
-            
-            #gabbaim-container .group-name {
-                font-size: 0.8em;
-                height: 40px;
-            }
-            
-            .toggle-switch {
-                width: 140px;
-                height: 45px;
-            }
-            
-            .toggle-slider {
-                width: 65px;
-                height: 39px;
-                border-radius: 20px;
-            }
-            
-            .toggle-switch.annual .toggle-slider {
-                transform: translateX(69px);
-            }
-
-            .period-date {
-                font-size: 1.3em;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="loading" id="loadingIndicator">טוען נתונים מהגיליון...</div>
+        <div class="loading" id="loadingIndicator">
+            מגלה ומנתח את הגיליונות שלך...<br>
+            <small>זה עלול לקחת כמה שניות</small>
+        </div>
+        
+        <div class="debug-info" id="debugInfo"></div>
         
         <div class="top-row" id="mainContent" style="display: none;">
             <div class="title-box">
@@ -639,7 +527,8 @@
 
     <script>
         // הגדרות בסיסיות
-        const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/1njmfovX0EOsnCPp6QpN26ODcabTTICUL0FNANA-4F84/export?format=csv';
+        const SPREADSHEET_ID = '1njmfovX0EOsnCPp6QpN26ODcabTTICUL0FNANA-4F84';
+        const MAX_SHEETS_TO_CHECK = 10; // כמה גיליונות לבדוק
         
         const TARGETS = {
             monthly: {
@@ -655,145 +544,296 @@
         };
 
         let isAnnual = false;
-        let rawData = [];
-        let processedData = {
-            monthly: {},
-            annual: {}
+        let discoveredSheets = {};
+        let currentData = {
+            monthly: { total: 0, shtiblech: {}, gabbaim: {} },
+            annual: { total: 0, shtiblech: {}, gabbaim: {} }
         };
 
-        // מיפוי חודשים עבריים
-        const HEBREW_MONTHS = {
-            'ניסן': 1, 'אייר': 2, 'סיוון': 3, 'תמוז': 4, 
-            'אב': 5, 'אלול': 6, 'תשרי': 7, 'חשוון': 8, 
-            'כסלו': 9, 'טבת': 10, 'שבט': 11, 'אדר': 12
-        };
-
-        // קבלת החודש הנוכחי
-        function getCurrentHebrewMonth() {
-            const now = new Date();
-            const hebrewMonthNames = ['תשרי', 'חשוון', 'כסלו', 'טבת', 'שבט', 'אדר', 'ניסן', 'אייר', 'סיוון', 'תמוז', 'אב', 'אלול'];
-            // חישוב פשוט - ינואר = טבת
-            let monthIndex = (now.getMonth() + 4) % 12; // התאמה לשנה עברית
-            return hebrewMonthNames[monthIndex];
-        }
-
-        // פונקציה לשליפת נתונים מ-Google Sheets
-        async function fetchDataFromGoogleSheets() {
-            try {
-                console.log('מתחיל לטעון נתונים מ-Google Sheets...');
-                
-                const response = await fetch(GOOGLE_SHEETS_CSV_URL);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const csvText = await response.text();
-                console.log('נתונים נטענו בהצלחה');
-                
-                // עיבוד CSV
-                const lines = csvText.split('\n');
-                const data = [];
-                
-                // דלג על השורה הראשונה (כותרות)
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
-                    
-                    // פיצול ידני של CSV
-                    const fields = [];
-                    let current = '';
-                    let inQuotes = false;
-                    
-                    for (let j = 0; j < line.length; j++) {
-                        const char = line[j];
-                        if (char === '"') {
-                            inQuotes = !inQuotes;
-                        } else if (char === ',' && !inQuotes) {
-                            fields.push(current.trim());
-                            current = '';
-                        } else {
-                            current += char;
-                        }
-                    }
-                    fields.push(current.trim());
-                    
-                    // וודא שיש לפחות 6 עמודות
-                    if (fields.length >= 6 && fields[2] && fields[3] && fields[4] && fields[5]) {
-                        const name = fields[2].replace(/"/g, '');
-                        const shtibel = fields[3].replace(/"/g, '');
-                        const month = fields[4].replace(/"/g, '');
-                        const amount = parseFloat(fields[5].replace(/"/g, '')) || 0;
-                        
-                        if (name && shtibel && month && amount > 0) {
-                            data.push({
-                                name: name,
-                                shtibel: shtibel,
-                                month: month,
-                                amount: amount
-                            });
-                        }
-                    }
-                }
-                
-                console.log(`עובד ${data.length} רשומות תקינות`);
-                return data;
-                
-            } catch (error) {
-                console.error('שגיאה בטעינת נתונים:', error);
-                throw error;
-            }
-        }
-
-        // עיבוד הנתונים לפי חודש ושנה
-        function processData(data) {
-            const currentMonth = getCurrentHebrewMonth();
+        // פונקציה לניסיון גישה לגיליון לפי GID
+        async function tryFetchSheetByGID(gid) {
+            const urls = [
+                `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}`,
+                `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}`
+            ];
             
-            const result = {
-                monthly: {
-                    totalRaised: 0,
-                    shtiblech: {},
-                    gabbaim: {}
-                },
-                annual: {
-                    totalRaised: 0,
-                    shtiblech: {},
-                    gabbaim: {}
+            for (let url of urls) {
+                try {
+                    console.log(`מנסה לגשת ל-GID ${gid} עם URL: ${url}`);
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const csvText = await response.text();
+                        if (csvText && csvText.length > 50 && !csvText.includes('error') && !csvText.includes('Error')) {
+                            console.log(`הצלחה! נמצא גיליון עם GID ${gid}, גודל: ${csvText.length} תווים`);
+                            return csvText;
+                        }
+                    }
+                } catch (error) {
+                    console.log(`שגיאה בגישה ל-GID ${gid}:`, error);
                 }
-            };
+            }
+            
+            return null;
+        }
 
-            data.forEach(row => {
+        // ניתוח סוג הגיליון לפי התוכן
+        function analyzeSheetType(csvData, gid) {
+            const lines = csvData.split('\n').filter(line => line.trim());
+            if (lines.length < 2) return { type: 'unknown', data: null };
+            
+            const firstLine = lines[0].toLowerCase();
+            const secondLine = lines[1];
+            
+            console.log(`מנתח גיליון GID ${gid}:`);
+            console.log(`שורה ראשונה: ${firstLine}`);
+            console.log(`שורה שנייה: ${secondLine}`);
+            
+            // בדוק אם זה גיליון נתונים גולמיים
+            if (firstLine.includes('submission') || firstLine.includes('שם') || firstLine.includes('שטיבל')) {
+                return { type: 'raw_data', data: parseRawData(csvData) };
+            }
+            
+            // בדוק אם זה גיליון סיכומים
+            const parsedData = parseSimpleCSV(csvData);
+            if (parsedData.length > 0) {
+                // נסה לזהות סוג הסיכום לפי התוכן
+                const firstEntryName = parsedData[0].name.toLowerCase();
+                
+                if (firstEntryName.includes('בית') || firstEntryName.includes('שיכון') || firstEntryName.includes('בעלזא') || firstEntryName.includes('זכרון')) {
+                    // כנראה שטיבלעך
+                    return { 
+                        type: parsedData.some(item => item.amount > 10000) ? 'annual_shtiblech' : 'monthly_shtiblech',
+                        data: parsedData 
+                    };
+                } else if (firstEntryName.includes('הרב') || parsedData[0].name.length > 10) {
+                    // כנראה גבאים
+                    return { 
+                        type: parsedData.some(item => item.amount > 3000) ? 'annual_gabbaim' : 'monthly_gabbaim',
+                        data: parsedData 
+                    };
+                } else {
+                    // יכול להיות גיליון סכומים כוללים
+                    return { type: 'totals', data: parsedData };
+                }
+            }
+            
+            return { type: 'unknown', data: null };
+        }
+
+        // עיבוד נתונים גולמיים
+        function parseRawData(csvData) {
+            const lines = csvData.split('\n');
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const fields = parseCSVLine(line);
+                
+                if (fields.length >= 6 && fields[2] && fields[3] && fields[4] && fields[5]) {
+                    const name = fields[2];
+                    const shtibel = fields[3];
+                    const month = fields[4];
+                    const amount = parseFloat(fields[5]) || 0;
+                    
+                    if (amount > 0) {
+                        data.push({ name, shtibel, month, amount });
+                    }
+                }
+            }
+            
+            return data;
+        }
+
+        // עיבוד CSV פשוט (שם + סכום)
+        function parseSimpleCSV(csvData) {
+            const lines = csvData.split('\n');
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const fields = parseCSVLine(line);
+                
+                if (fields.length >= 2 && fields[0] && fields[1]) {
+                    const name = fields[0];
+                    const amount = parseFloat(fields[1]) || 0;
+                    
+                    if (amount > 0) {
+                        data.push({ name, amount });
+                    }
+                }
+            }
+            
+            return data;
+        }
+
+        // פענוח שורת CSV
+        function parseCSVLine(line) {
+            const fields = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let j = 0; j < line.length; j++) {
+                const char = line[j];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    fields.push(current.trim().replace(/"/g, ''));
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            fields.push(current.trim().replace(/"/g, ''));
+            
+            return fields;
+        }
+
+        // גילוי וניתוח כל הגיליונות
+        async function discoverAllSheets() {
+            console.log('מתחיל לגלות גיליונות...');
+            updateDebug('מתחיל לגלות גיליונות...');
+            
+            const sheets = {};
+            let rawDataSheet = null;
+            
+            // בדוק גיליונות מ-0 עד MAX_SHEETS_TO_CHECK
+            for (let gid = 0; gid < MAX_SHEETS_TO_CHECK; gid++) {
+                updateDebug(`בודק גיליון GID ${gid}...`);
+                
+                const csvData = await tryFetchSheetByGID(gid);
+                if (csvData) {
+                    const analysis = analyzeSheetType(csvData, gid);
+                    console.log(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
+                    updateDebug(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
+                    
+                    if (analysis.type !== 'unknown' && analysis.data) {
+                        sheets[analysis.type] = analysis.data;
+                        
+                        if (analysis.type === 'raw_data') {
+                            rawDataSheet = analysis.data;
+                        }
+                    }
+                }
+                
+                // המתן קצר בין בקשות
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            
+            // אם לא מצאנו גיליונות מסוכמים אבל יש נתונים גולמיים, חשב בעצמך
+            if (rawDataSheet && Object.keys(sheets).length === 1) {
+                console.log('מחשב סיכומים מהנתונים הגולמיים...');
+                updateDebug('מחשב סיכומים מהנתונים הגולמיים...');
+                const computed = computeFromRawData(rawDataSheet);
+                Object.assign(sheets, computed);
+            }
+            
+            updateDebug(`סה"כ נמצאו ${Object.keys(sheets).length} גיליונות מועילים`);
+            console.log('גיליונות שנמצאו:', Object.keys(sheets));
+            
+            return sheets;
+        }
+
+        // חישוב סיכומים מנתונים גולמיים
+        function computeFromRawData(rawData) {
+            const monthlyGabbaim = {};
+            const annualGabbaim = {};
+            const monthlyShtiblech = {};
+            const annualShtiblech = {};
+            
+            const currentMonth = 'אייר'; // החודש הנוכחי לפי הנתונים
+            
+            rawData.forEach(row => {
                 const { name, shtibel, month, amount } = row;
                 
-                // נתונים שנתיים - כל החודשים
-                result.annual.totalRaised += amount;
+                // סיכומים שנתיים
+                if (!annualGabbaim[name]) annualGabbaim[name] = 0;
+                if (!annualShtiblech[shtibel]) annualShtiblech[shtibel] = 0;
+                annualGabbaim[name] += amount;
+                annualShtiblech[shtibel] += amount;
                 
-                if (!result.annual.shtiblech[shtibel]) {
-                    result.annual.shtiblech[shtibel] = 0;
-                }
-                result.annual.shtiblech[shtibel] += amount;
-                
-                if (!result.annual.gabbaim[name]) {
-                    result.annual.gabbaim[name] = 0;
-                }
-                result.annual.gabbaim[name] += amount;
-                
-                // נתונים חודשיים - רק החודש הנוכחי
+                // סיכומים חודשיים
                 if (month === currentMonth) {
-                    result.monthly.totalRaised += amount;
-                    
-                    if (!result.monthly.shtiblech[shtibel]) {
-                        result.monthly.shtiblech[shtibel] = 0;
-                    }
-                    result.monthly.shtiblech[shtibel] += amount;
-                    
-                    if (!result.monthly.gabbaim[name]) {
-                        result.monthly.gabbaim[name] = 0;
-                    }
-                    result.monthly.gabbaim[name] += amount;
+                    if (!monthlyGabbaim[name]) monthlyGabbaim[name] = 0;
+                    if (!monthlyShtiblech[shtibel]) monthlyShtiblech[shtibel] = 0;
+                    monthlyGabbaim[name] += amount;
+                    monthlyShtiblech[shtibel] += amount;
                 }
             });
-
+            
+            // המר לפורמט הנדרש
+            const result = {};
+            
+            if (Object.keys(monthlyGabbaim).length > 0) {
+                result.monthly_gabbaim = Object.entries(monthlyGabbaim).map(([name, amount]) => ({ name, amount }));
+            }
+            
+            if (Object.keys(annualGabbaim).length > 0) {
+                result.annual_gabbaim = Object.entries(annualGabbaim).map(([name, amount]) => ({ name, amount }));
+            }
+            
+            if (Object.keys(monthlyShtiblech).length > 0) {
+                result.monthly_shtiblech = Object.entries(monthlyShtiblech).map(([name, amount]) => ({ name, amount }));
+            }
+            
+            if (Object.keys(annualShtiblech).length > 0) {
+                result.annual_shtiblech = Object.entries(annualShtiblech).map(([name, amount]) => ({ name, amount }));
+            }
+            
             return result;
+        }
+
+        // עדכון מידע דיבוג
+        function updateDebug(message) {
+            const debugElement = document.getElementById('debugInfo');
+            debugElement.innerHTML += message + '<br>';
+            // debugElement.classList.add('show'); // הסר הערה כדי להציג דיבוג
+        }
+
+        // ארגון הנתונים שנתפסו
+        function organizeDiscoveredData(sheets) {
+            const monthly = { total: 0, shtiblech: {}, gabbaim: {} };
+            const annual = { total: 0, shtiblech: {}, gabbaim: {} };
+            
+            // עבד כל סוג של גיליון
+            Object.entries(sheets).forEach(([type, data]) => {
+                if (type.includes('monthly')) {
+                    if (type.includes('shtiblech')) {
+                        data.forEach(item => {
+                            monthly.shtiblech[item.name] = item.amount;
+                            monthly.total += item.amount;
+                        });
+                    } else if (type.includes('gabbaim')) {
+                        data.forEach(item => {
+                            monthly.gabbaim[item.name] = item.amount;
+                        });
+                    }
+                } else if (type.includes('annual')) {
+                    if (type.includes('shtiblech')) {
+                        data.forEach(item => {
+                            annual.shtiblech[item.name] = item.amount;
+                            annual.total += item.amount;
+                        });
+                    } else if (type.includes('gabbaim')) {
+                        data.forEach(item => {
+                            annual.gabbaim[item.name] = item.amount;
+                        });
+                    }
+                }
+            });
+            
+            // אם אין סכום כולל, חשב מהשטיבלעך
+            if (monthly.total === 0) {
+                monthly.total = Object.values(monthly.shtiblech).reduce((sum, val) => sum + val, 0);
+            }
+            if (annual.total === 0) {
+                annual.total = Object.values(annual.shtiblech).reduce((sum, val) => sum + val, 0);
+            }
+            
+            return { monthly, annual };
         }
 
         // פונקציה לאנימציה של מספרים
@@ -838,7 +878,7 @@
                 toggle.classList.remove('annual');
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
-                periodDate.textContent = `חודש ${getCurrentHebrewMonth()} תשפ״ה`;
+                periodDate.textContent = 'חודש טבת תשפ״ה';
             }
             
             updateMainProgress();
@@ -850,7 +890,7 @@
         function updateMainProgress() {
             const data = getCurrentData();
             const targets = getCurrentTargets();
-            const percentage = Math.round((data.totalRaised / targets.total) * 100);
+            const percentage = Math.round((data.total / targets.total) * 100);
             
             const progressBar = document.getElementById('mainProgressBar');
             const progressText = document.getElementById('mainProgressText');
@@ -860,7 +900,7 @@
             progressBar.style.width = '0%';
             progressText.textContent = '0%';
             
-            totalAmount.textContent = `${data.totalRaised.toLocaleString()} ש"ח`;
+            totalAmount.textContent = `${data.total.toLocaleString()} ש"ח`;
             targetInfo.textContent = `מתוך יעד של ${targets.total.toLocaleString()} ש"ח`;
             
             setTimeout(() => {
@@ -994,7 +1034,7 @@
 
         // קבלת נתונים נוכחיים
         function getCurrentData() {
-            return isAnnual ? processedData.annual : processedData.monthly;
+            return isAnnual ? currentData.annual : currentData.monthly;
         }
 
         // קבלת יעדים נוכחיים
@@ -1009,14 +1049,23 @@
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('gabbaimSection').style.display = 'none';
                 
-                rawData = await fetchDataFromGoogleSheets();
-                processedData = processData(rawData);
+                // גלה את כל הגיליונות
+                const sheets = await discoverAllSheets();
                 
-                console.log('נתונים עובדו בהצלחה:', processedData);
+                if (Object.keys(sheets).length === 0) {
+                    throw new Error('לא נמצא אף גיליון מועיל');
+                }
                 
-                // עדכן תאריך
-                const periodDate = document.getElementById('periodDate');
-                periodDate.textContent = `חודש ${getCurrentHebrewMonth()} תשפ״ה`;
+                // ארגן את הנתונים
+                currentData = organizeDiscoveredData(sheets);
+                
+                console.log('נתונים מאורגנים:', currentData);
+                updateDebug(`נתונים מאורגנים: חודשי=${currentData.monthly.total}, שנתי=${currentData.annual.total}`);
+                
+                // בדוק שיש נתונים
+                if (currentData.monthly.total === 0 && currentData.annual.total === 0) {
+                    throw new Error('לא נמצאו נתונים תקינים בגיליונות');
+                }
                 
                 // הסתר הודעת טעינה והצג תוכן
                 document.getElementById('loadingIndicator').style.display = 'none';
@@ -1028,13 +1077,17 @@
                 updateGroups();
                 updateRepresentatives();
                 
+                updateDebug('הדשבורד טעון בהצלחה!');
+                
             } catch (error) {
                 console.error('שגיאה בטעינת נתונים:', error);
                 document.getElementById('loadingIndicator').innerHTML = `
                     <div class="error">
                         שגיאה בטעינת נתונים מהגיליון<br>
-                        אנא בדוק שהגיליון פתוח לציבור<br>
+                        ${error.message}<br>
+                        <br>
                         <button onclick="loadData()" style="margin-top: 10px; padding: 10px 20px; background: #FFD700; color: #000; border: none; border-radius: 5px; cursor: pointer;">נסה שוב</button>
+                        <button onclick="document.getElementById('debugInfo').classList.toggle('show')" style="margin-top: 10px; margin-right: 10px; padding: 10px 20px; background: #666; color: #fff; border: none; border-radius: 5px; cursor: pointer;">הצג פרטי דיבוג</button>
                     </div>
                 `;
             }
@@ -1045,17 +1098,15 @@
             setInterval(async () => {
                 console.log('מרענן נתונים...');
                 try {
-                    const newData = await fetchDataFromGoogleSheets();
-                    const newProcessedData = processData(newData);
+                    const newSheets = await discoverAllSheets();
+                    const newData = organizeDiscoveredData(newSheets);
                     
                     // בדוק אם יש שינויים
-                    const currentTotal = getCurrentData().totalRaised;
-                    const newTotal = isAnnual ? newProcessedData.annual.totalRaised : newProcessedData.monthly.totalRaised;
-                    
-                    if (currentTotal !== newTotal) {
+                    if (newData.monthly.total !== currentData.monthly.total || 
+                        newData.annual.total !== currentData.annual.total) {
+                        
                         console.log('זוהו שינויים בנתונים, מעדכן תצוגה...');
-                        rawData = newData;
-                        processedData = newProcessedData;
+                        currentData = newData;
                         
                         updateMainProgress();
                         updateGroups();
@@ -1083,4 +1134,3 @@
     </script>
 </body>
 </html>
-                
