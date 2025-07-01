@@ -53,10 +53,6 @@
             background: #654321;
         }
 
-        .header {
-            display: none;
-        }
-
         .top-row {
             display: flex;
             justify-content: space-between;
@@ -115,13 +111,6 @@
             background-clip: text;
         }
 
-        .content-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 50px;
-        }
-
         .content-box {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
@@ -137,11 +126,6 @@
         .left-section .content-box {
             display: block;
             width: 100%;
-        }
-
-        .right-section {
-            width: 400px;
-            text-align: center;
         }
 
         .gabbaim-section {
@@ -251,6 +235,9 @@
             align-items: center;
             justify-content: center;
             line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         .group-progress {
@@ -276,10 +263,6 @@
             background: linear-gradient(0deg, #FFD700, #FFA500);
         }
 
-        .group-progress-bar.exceeded {
-            background: linear-gradient(0deg, #FFD700 0%, #FFA500 100%, #32CD32 100%);
-        }
-
         .progress-exceeded {
             position: absolute;
             bottom: 0;
@@ -303,17 +286,6 @@
             line-height: 1.1;
         }
 
-        .group-amount {
-            font-size: 0.8em;
-            color: #ccc;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .celebration {
-            /* הסרתי את האנימציה */
-        }
-
         .title {
             font-size: 2em;
             margin-bottom: 10px;
@@ -335,12 +307,6 @@
 
         .title-box .total-amount {
             margin-top: 20px;
-        }
-
-        .toggle-label {
-            font-size: 1.2em;
-            color: #FFD700;
-            font-weight: bold;
         }
 
         .toggle-switch {
@@ -404,7 +370,6 @@
             color: rgba(255, 215, 0, 0.5);
         }
 
-        /* סגנון לתצוגת התאריך */
         .period-date {
             font-size: 1.1em;
             color: #FFD700;
@@ -424,7 +389,77 @@
             border-bottom: 1px solid rgba(255, 215, 0, 0.2);
         }
 
-        /* Responsive design למכשירים צרים */
+        .loading {
+            text-align: center;
+            color: #FFD700;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .error {
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 1.1em;
+            margin: 20px 0;
+        }
+
+        .debug-info {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: #ccc;
+            text-align: left;
+            display: none;
+        }
+
+        .debug-info.show {
+            display: block;
+        }
+
+        .refresh-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #FFD700;
+            font-size: 0.9em;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .refresh-indicator.show {
+            opacity: 1;
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
             .top-row {
                 flex-direction: column;
@@ -475,111 +510,28 @@
             .period-date {
                 font-size: 1em;
             }
-        }
 
-        /* Responsive design למסכים גדולים - רק במסך מלא */
-        @media (min-width: 1920px) and (min-height: 1080px) {
-            .container {
-                max-width: 1600px;
-                padding: 40px;
-            }
-            
-            .logo {
-                width: 160px !important;
-                height: 160px !important;
-            }
-            
-            .title-box .title {
-                font-size: 2.2em;
-            }
-            
-            .total-amount {
-                font-size: 3em;
-            }
-            
-            .target-info {
-                font-size: 1.4em;
-            }
-            
-            .main-progress {
-                height: 60px;
-            }
-            
-            .main-progress-text {
-                font-size: 1.3em;
-            }
-            
-            .section-title {
-                font-size: 1.8em;
-            }
-            
-            .groups-container {
-                gap: 12px;
-                padding: 20px 0;
-            }
-            
-            .group-item {
-                width: 80px;
-            }
-            
-            .group-progress {
-                width: 60px;
-                height: 300px;
-            }
-            
-            .group-name {
-                font-size: 1em;
-                height: 50px;
-            }
-            
-            .group-percentage {
-                font-size: 1.1em;
-            }
-            
-            #gabbaim-container .group-item {
-                width: 45px;
-            }
-            
-            #gabbaim-container .group-progress {
-                width: 35px;
-                height: 300px;
-            }
-            
-            #gabbaim-container .group-name {
+            .refresh-indicator {
+                top: 10px;
+                left: 10px;
                 font-size: 0.8em;
-                height: 40px;
-            }
-            
-            .toggle-switch {
-                width: 140px;
-                height: 45px;
-            }
-            
-            .toggle-slider {
-                width: 65px;
-                height: 39px;
-                border-radius: 20px;
-            }
-            
-            .toggle-switch.annual .toggle-slider {
-                transform: translateX(69px);
-            }
-
-            .period-date {
-                font-size: 1.3em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="top-row">
+    <div class="refresh-indicator" id="refreshIndicator">מרענן נתונים...</div>
+    
+    <div class="container">        
+        <div class="debug-info" id="debugInfo"></div>
+        
+        <div class="top-row" id="mainContent">
             <div class="title-box">
                 <div class="title-content">
                     <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo">
                     <div class="title-and-toggle">
                         <h1 class="title">מעקב גיוס כספים</h1>
-                        <div class="period-date" id="periodDate">חודש אייר תשפ״ה</div>
+                        <div class="period-date" id="periodDate">טוען חודש...</div>
                         <div class="toggle-container" style="border-bottom: none !important; padding-bottom: 0 !important;">
                             <div class="toggle-switch" id="periodToggle" onclick="togglePeriod()">
                                 <div class="toggle-text left">חודשי</div>
@@ -590,12 +542,12 @@
                     </div>
                 </div>
                 
-                <div class="total-amount" id="totalAmount">7175 ש"ח</div>
-                <div class="target-info">מתוך יעד של 8000 ש"ח</div>
+                <div class="total-amount" id="totalAmount">טוען...</div>
+                <div class="target-info" id="targetInfo">מתוך יעד של 8000 ש"ח</div>
                 
                 <div class="main-progress">
                     <div class="main-progress-bar" id="mainProgressBar">
-                        <div class="main-progress-text" id="mainProgressText">0%</div>
+                        <div class="main-progress-text" id="mainProgressText">טוען...</div>
                     </div>
                 </div>
             </div>
@@ -604,74 +556,494 @@
                 <div class="content-box">
                     <div class="section-title">לפי שטיבלעך</div>
                     <div class="groups-container" id="shtiblech-container">
-                        <!-- הקבוצות יתווספו כאן באמצעות JavaScript -->
+                        <div style="color: #FFD700; text-align: center; width: 100%;">טוען נתונים...</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="gabbaim-section">
+        <div class="gabbaim-section" id="gabbaimSection">
             <div class="content-box">
                 <div class="section-title">לפי גבאים</div>
                 <div class="groups-container" id="gabbaim-container">
-                    <!-- הנציגים יתווספו כאן באמצעות JavaScript -->
+                    <div style="color: #FFD700; text-align: center; width: 100%;">טוען נתונים...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // נתונים חודשיים
-        const monthlyData = {
-            totalTarget: 8000,
-            groupTarget: 2000,
-            totalRaised: 7175,
-            groupAmounts: [478, 550, 945, 1225, 1877, 2100],
-            representativeAmounts: [21, 89, 99, 207, 211, 250, 259, 280, 321, 326, 350, 350, 350, 350, 350, 412, 425, 450, 458, 478, 550, 589],
-            repTarget: 500
+        // הגדרות בסיסיות
+        const SPREADSHEET_ID = '1njmfovX0EOsnCPp6QpN26ODcabTTICUL0FNANA-4F84';
+        const MAX_SHEETS_TO_CHECK = 10; // כמה גיליונות לבדוק
+        const REFRESH_INTERVAL = 40000; // 40 שניות
+        
+        const TARGETS = {
+            monthly: {
+                total: 8000,
+                group: 2000,
+                representative: 500
+            },
+            annual: {
+                total: 96000,
+                group: 24000,
+                representative: 6000
+            }
         };
-
-        // נתונים שנתיים
-        const annualData = {
-            totalTarget: 96000,
-            groupTarget: 12000,
-            totalRaised: 14350,
-            groupAmounts: [956, 1100, 1890, 2450, 3754, 4200],
-            representativeAmounts: [42, 178, 198, 414, 422, 500, 518, 560, 642, 652, 700, 700, 700, 700, 700, 824, 850, 900, 916, 956, 1100, 1178],
-            repTarget: 3000
-        };
-
-        // שמות שטיבלעך - חודשי
-        const monthlyGroupNames = [
-            'רמת אלחנן', 
-            'שיכון ה\'', 
-            'בן יעקב', 
-            'זכרון רפאל', 
-            'בעלזא 5', 
-            'בית פנחס'
-        ];
-
-        // שמות שטיבלעך - שנתי
-        const annualGroupNames = [
-            'רמת אלחנן', 
-            'שיכון ה\'', 
-            'בן יעקב', 
-            'זכרון רפאל', 
-            'בעלזא 5', 
-            'בית פנחס'
-        ];
-
-        // שמות נציגים - חודשי
-        const monthlyRepresentatives = [
-            'הרב ישראל פרידמן', 'הרב שמעון יחזקאל ווייס', 'הרב צבי יוסף לנדאו', 'הרב יעקב פרישמן', 'הרב הלל רויטמן', 'הרב פנחס מנדל', 'הרב יוסף שוורץ', 'הרב זיכרמן יוסף אריה', 'הרב ישראל יצחק פלדמן', 'הרב משה הורביץ', 'הרב שמואל יעקב פירר', 'הרב מתתיהו קרייזמן', 'הרב חיים פרידמן', 'הרב חיים נח אלבום', 'הרב אברהם כהנא', 'הרב צימרמן חיים שלום', 'הרב דוד מנדל', 'הרב חיים צבי גלנדאור', 'הרב מיכאל שמוטץ', 'הרב שלום פנט', 'הרב שלמה מאיר קליין', 'הרב בן ציון לוי'
-        ];
-
-        // שמות נציגים - שנתי
-        const annualRepresentatives = [
-            'הרב ישראל פרידמן', 'הרב שמעון יחזקאל ווייס', 'הרב צבי יוסף לנדאו', 'הרב יעקב פרישמן', 'הרב הלל רויטמן', 'הרב פנחס מנדל', 'הרב יוסף שוורץ', 'הרב זיכרמן יוסף אריה', 'הרב ישראל יצחק פלדמן', 'הרב משה הורביץ', 'הרב שמואל יעקב פירר', 'הרב מתתיהו קרייזמן', 'הרב חיים פרידמן', 'הרב חיים נח אלבום', 'הרב אברהם כהנא', 'הרב צימרמן חיים שלום', 'הרב דוד מנדל', 'הרב חיים צבי גלנדאור', 'הרב מיכאל שמוטץ', 'הרב שלום פנט', 'הרב שלמה מאיר קליין', 'הרב בן ציון לוי'
-        ];
 
         let isAnnual = false;
+        let discoveredSheets = {};
+        let cachedData = null; // שמירת נתונים בזיכרון
+        let currentHebrewMonth = 'טוען...'; // משתנה לשמירת החודש העברי
+        let currentData = {
+            monthly: { total: 0, shtiblech: {}, gabbaim: {} },
+            annual: { total: 0, shtiblech: {}, gabbaim: {} }
+        };
+        let refreshInterval = null; // משתנה לשמירת ה-interval
+
+        // הצגת אינדיקטור רענון
+        function showRefreshIndicator() {
+            const indicator = document.getElementById('refreshIndicator');
+            if (indicator) {
+                indicator.classList.add('show');
+            }
+        }
+
+        // הסתרת אינדיקטור רענון
+        function hideRefreshIndicator() {
+            const indicator = document.getElementById('refreshIndicator');
+            if (indicator) {
+                indicator.classList.remove('show');
+            }
+        }
+
+        // פונקציה לניסיון גישה לגיליון לפי GID
+        async function tryFetchSheetByGID(gid) {
+            const urls = [
+                `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}`,
+                `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}`
+            ];
+            
+            for (let url of urls) {
+                try {
+                    console.log(`מנסה לגשת ל-GID ${gid} עם URL: ${url}`);
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const csvText = await response.text();
+                        if (csvText && csvText.length > 50 && !csvText.includes('error') && !csvText.includes('Error')) {
+                            console.log(`הצלחה! נמצא גיליון עם GID ${gid}, גודל: ${csvText.length} תווים`);
+                            return csvText;
+                        }
+                    }
+                } catch (error) {
+                    console.log(`שגיאה בגישה ל-GID ${gid}:`, error);
+                }
+            }
+            
+            return null;
+        }
+
+        // קבלת החודש העברי הנוכחי (חודש קודם) - עם debug מפורט
+        async function getCurrentHebrewMonth() {
+            try {
+                const now = new Date();
+                const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                const year = lastMonth.getFullYear();
+                const month = lastMonth.getMonth() + 1;
+                
+                const url = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=1&g2h=1`;
+                console.log(`🌐 מתחבר ל-API: ${url}`);
+                updateDebug(`מתחבר ל-API: ${url}`);
+                
+                const response = await fetch(url);
+                console.log(`📡 תגובת API: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`📊 נתונים מה-API:`, data);
+                    updateDebug(`נתונים מה-API: ${JSON.stringify(data)}`);
+                    
+                    const englishMonth = data.hm; // החודש העברי באנגלית
+                    console.log(`📅 חודש באנגלית: ${englishMonth}`);
+                    
+                    // מיפוי מאנגלית לעברית
+                    const monthMapping = {
+                        'Nissan': 'ניסן',
+                        'Iyyar': 'אייר', 
+                        'Sivan': 'סיוון',
+                        'Tamuz': 'תמוז',
+                        'Av': 'אב',
+                        'Elul': 'אלול',
+                        'Tishrei': 'תשרי',
+                        'Cheshvan': 'חשוון',
+                        'Kislev': 'כסלו',
+                        'Tevet': 'טבת',
+                        'Shvat': 'שבט',
+                        'Adar': 'אדר',
+                        'Adar I': 'אדר א׳',
+                        'Adar II': 'אדר ב׳'
+                    };
+                    
+                    const hebrewMonth = monthMapping[englishMonth] || englishMonth;
+                    console.log(`✅ חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
+                    updateDebug(`חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
+                    return hebrewMonth;
+                } else {
+                    console.log(`❌ שגיאה ב-API: ${response.status}`);
+                    updateDebug(`שגיאה ב-API: ${response.status}`);
+                    return 'טבת';
+                }
+            } catch (error) {
+                console.log('❌ שגיאה בקבלת חודש עברי:', error);
+                updateDebug(`שגיאה בקבלת חודש עברי: ${error.message}`);
+                return 'טבת';
+            }
+        }
+        
+        function analyzeSheetType(csvData, gid) {
+            const lines = csvData.split('\n').filter(line => line.trim());
+            if (lines.length < 2) return { type: 'unknown', data: null };
+            
+            const firstLine = lines[0].toLowerCase();
+            const secondLine = lines[1];
+            
+            console.log(`מנתח גיליון GID ${gid}:`);
+            console.log(`שורה ראשונה: ${firstLine}`);
+            console.log(`שורה שנייה: ${secondLine}`);
+            
+            // בדוק אם זה גיליון נתונים גולמיים
+            if (firstLine.includes('submission') || firstLine.includes('שם') || firstLine.includes('שטיבל')) {
+                return { type: 'raw_data', data: parseRawData(csvData) };
+            }
+            
+            // בדוק אם זה גיליון סיכומים
+            const parsedData = parseSimpleCSV(csvData);
+            if (parsedData.length > 0) {
+                // נסה לזהות סוג הסיכום לפי התוכן
+                const firstEntryName = parsedData[0].name.toLowerCase();
+                
+                if (firstEntryName.includes('בית') || firstEntryName.includes('שיכון') || firstEntryName.includes('בעלזא') || firstEntryName.includes('זכרון')) {
+                    // כנראה שטיבלעך
+                    return { 
+                        type: parsedData.some(item => item.amount > 10000) ? 'annual_shtiblech' : 'monthly_shtiblech',
+                        data: parsedData 
+                    };
+                } else if (firstEntryName.includes('הרב') || parsedData[0].name.length > 10) {
+                    // כנראה גבאים
+                    return { 
+                        type: parsedData.some(item => item.amount > 3000) ? 'annual_gabbaim' : 'monthly_gabbaim',
+                        data: parsedData 
+                    };
+                } else {
+                    // יכול להיות גיליון סכומים כוללים
+                    return { type: 'totals', data: parsedData };
+                }
+            }
+            
+            return { type: 'unknown', data: null };
+        }
+
+        // עיבוד נתונים גולמיים
+        function parseRawData(csvData) {
+            const lines = csvData.split('\n');
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const fields = parseCSVLine(line);
+                
+                if (fields.length >= 6 && fields[2] && fields[3] && fields[4] && fields[5]) {
+                    const name = fields[2];
+                    const shtibel = fields[3];
+                    const month = fields[4];
+                    const amount = parseFloat(fields[5]) || 0;
+                    
+                    if (amount > 0) {
+                        data.push({ name, shtibel, month, amount });
+                    }
+                }
+            }
+            
+            return data;
+        }
+
+        // עיבוד CSV פשוט (שם + סכום)
+        function parseSimpleCSV(csvData) {
+            const lines = csvData.split('\n');
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const fields = parseCSVLine(line);
+                
+                if (fields.length >= 2 && fields[0] && fields[1]) {
+                    const name = fields[0];
+                    const amount = parseFloat(fields[1]) || 0;
+                    
+                    if (amount > 0) {
+                        data.push({ name, amount });
+                    }
+                }
+            }
+            
+            return data;
+        }
+
+        // פענוח שורת CSV
+        function parseCSVLine(line) {
+            const fields = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let j = 0; j < line.length; j++) {
+                const char = line[j];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    fields.push(current.trim().replace(/"/g, ''));
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            fields.push(current.trim().replace(/"/g, ''));
+            
+            return fields;
+        }
+
+        // עדכון בר התקדמות (לא בשימוש עוד)
+        function updateProgress(current, total, message) {
+            // פונקציה זו נשארת לצורך תאימות אבל לא בשימוש
+            console.log(`התקדמות: ${current}/${total} - ${message}`);
+        }
+
+        // גילוי וניתוח כל הגיליונות - גרסה מהירה עם cache
+        async function discoverAllSheets() {
+            console.log('מתחיל לגלות גיליונות...');
+            updateDebug('מתחיל לגלות גיליונות...');
+            updateProgress(0, MAX_SHEETS_TO_CHECK + 1, 'מתחיל סריקה...');
+            
+            // אם יש נתונים שמורים, השתמש בהם
+            if (cachedData) {
+                console.log('משתמש בנתונים שמורים מהזיכרון');
+                updateProgress(MAX_SHEETS_TO_CHECK + 1, MAX_SHEETS_TO_CHECK + 1, 'משתמש בנתונים שמורים');
+                return cachedData;
+            }
+            
+            const sheets = {};
+            let rawDataSheet = null;
+            
+            // בדוק גיליונות מ-0 עד MAX_SHEETS_TO_CHECK - בלי המתנה!
+            const promises = [];
+            for (let gid = 0; gid < MAX_SHEETS_TO_CHECK; gid++) {
+                promises.push(
+                    tryFetchSheetByGID(gid).then(csvData => {
+                        updateProgress(gid + 1, MAX_SHEETS_TO_CHECK + 1, `בודק גיליון ${gid + 1}/${MAX_SHEETS_TO_CHECK}`);
+                        updateDebug(`בודק גיליון GID ${gid}...`);
+                        
+                        if (csvData) {
+                            const analysis = analyzeSheetType(csvData, gid);
+                            console.log(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
+                            updateDebug(`גיליון GID ${gid} זוהה כ: ${analysis.type}`);
+                            return { gid, analysis };
+                        }
+                        return null;
+                    })
+                );
+            }
+            
+            // חכה לכל הבדיקות במקביל
+            const results = await Promise.all(promises);
+            
+            // עבד את התוצאות
+            for (const result of results) {
+                if (result && result.analysis.type !== 'unknown' && result.analysis.data) {
+                    sheets[result.analysis.type] = result.analysis.data;
+                    
+                    if (result.analysis.type === 'raw_data') {
+                        rawDataSheet = result.analysis.data;
+                    }
+                }
+            }
+            
+            updateProgress(MAX_SHEETS_TO_CHECK, MAX_SHEETS_TO_CHECK + 1, 'מחשב סיכומים...');
+            
+            // אם לא מצאנו גיליונות מסוכמים אבל יש נתונים גולמיים, חשב בעצמך
+            if (rawDataSheet && Object.keys(sheets).length === 1) {
+                console.log('מחשב סיכומים מהנתונים הגולמיים...');
+                updateDebug('מחשב סיכומים מהנתונים הגולמיים...');
+                const computed = await computeFromRawData(rawDataSheet);
+                Object.assign(sheets, computed);
+            }
+            
+            updateProgress(MAX_SHEETS_TO_CHECK + 1, MAX_SHEETS_TO_CHECK + 1, 'השלמת עיבוד הנתונים');
+            
+            // שמור בזיכרון
+            cachedData = sheets;
+            
+            updateDebug(`סה"כ נמצאו ${Object.keys(sheets).length} גיליונות מועילים`);
+            console.log('גיליונות שנמצאו:', Object.keys(sheets));
+            
+            return sheets;
+        }
+
+        // חישוב סיכומים מנתונים גולמיים
+        async function computeFromRawData(rawData) {
+            const monthlyGabbaim = {};
+            const annualGabbaim = {};
+            const monthlyShtiblech = {};
+            const annualShtiblech = {};
+            
+            // קבל את החודש הנוכחי מ-API
+            const currentMonth = await getCurrentHebrewMonth();
+            console.log(`החודש הנוכחי: ${currentMonth}`);
+            
+            rawData.forEach(row => {
+                const { name, shtibel, month, amount } = row;
+                
+                // סיכומים שנתיים
+                if (!annualGabbaim[name]) annualGabbaim[name] = 0;
+                if (!annualShtiblech[shtibel]) annualShtiblech[shtibel] = 0;
+                annualGabbaim[name] += amount;
+                annualShtiblech[shtibel] += amount;
+                
+                // סיכומים חודשיים
+                if (month === currentMonth) {
+                    if (!monthlyGabbaim[name]) monthlyGabbaim[name] = 0;
+                    if (!monthlyShtiblech[shtibel]) monthlyShtiblech[shtibel] = 0;
+                    monthlyGabbaim[name] += amount;
+                    monthlyShtiblech[shtibel] += amount;
+                }
+            });
+            
+            // המר לפורמט הנדרש
+            const result = {};
+            
+            if (Object.keys(monthlyGabbaim).length > 0) {
+                result.monthly_gabbaim = Object.entries(monthlyGabbaim).map(([name, amount]) => ({ name, amount }));
+            }
+            
+            if (Object.keys(annualGabbaim).length > 0) {
+                result.annual_gabbaim = Object.entries(annualGabbaim).map(([name, amount]) => ({ name, amount }));
+            }
+            
+            if (Object.keys(monthlyShtiblech).length > 0) {
+                result.monthly_shtiblech = Object.entries(monthlyShtiblech).map(([name, amount]) => ({ name, amount }));
+            }
+            
+            if (Object.keys(annualShtiblech).length > 0) {
+                result.annual_shtiblech = Object.entries(annualShtiblech).map(([name, amount]) => ({ name, amount }));
+            }
+            
+            return result;
+        }
+
+        // רענון נתונים (בלי טעינה מחדש של כל הממשק)
+        async function refreshData() {
+            try {
+                console.log('🔄 מתחיל רענון נתונים...');
+                showRefreshIndicator();
+                
+                // נקה cache כדי לכפות טעינה מחדש
+                cachedData = null;
+                
+                // טען נתונים חדשים
+                const sheets = await discoverAllSheets();
+                
+                if (Object.keys(sheets).length === 0) {
+                    console.log('⚠️ לא נמצאו נתונים ברענון');
+                    return;
+                }
+                
+                // ארגן נתונים חדשים
+                const newData = organizeDiscoveredData(sheets);
+                
+                // בדוק אם יש שינויים
+                const hasChanges = (
+                    newData.monthly.total !== currentData.monthly.total || 
+                    newData.annual.total !== currentData.annual.total ||
+                    Object.keys(newData.monthly.shtiblech).length !== Object.keys(currentData.monthly.shtiblech).length ||
+                    Object.keys(newData.annual.shtiblech).length !== Object.keys(currentData.annual.shtiblech).length
+                );
+                
+                if (hasChanges) {
+                    console.log('✅ זוהו שינויים בנתונים, מעדכן תצוגה...');
+                    currentData = newData;
+                    
+                    // עדכן את התצוגה
+                    updateMainProgress();
+                    updateGroups();
+                    updateRepresentatives();
+                    
+                    updateDebug(`רענון הושלם בהצלחה. חודשי: ${currentData.monthly.total}, שנתי: ${currentData.annual.total}`);
+                } else {
+                    console.log('📊 אין שינויים בנתונים');
+                    updateDebug('רענון הושלם - אין שינויים בנתונים');
+                }
+                
+            } catch (error) {
+                console.error('❌ שגיאה ברענון נתונים:', error);
+                updateDebug(`שגיאה ברענון: ${error.message}`);
+            } finally {
+                hideRefreshIndicator();
+            }
+        }
+
+        function updateDebug(message) {
+            const debugElement = document.getElementById('debugInfo');
+            if (debugElement) {
+                const timestamp = new Date().toLocaleTimeString('he-IL');
+                debugElement.innerHTML += `[${timestamp}] ${message}<br>`;
+                // debugElement.classList.add('show'); // הסר הערה כדי להציג דיבוג
+            }
+        }
+
+        // ארגון הנתונים שנתפסו
+        function organizeDiscoveredData(sheets) {
+            const monthly = { total: 0, shtiblech: {}, gabbaim: {} };
+            const annual = { total: 0, shtiblech: {}, gabbaim: {} };
+            
+            // עבד כל סוג של גיליון
+            Object.entries(sheets).forEach(([type, data]) => {
+                if (type.includes('monthly')) {
+                    if (type.includes('shtiblech')) {
+                        data.forEach(item => {
+                            monthly.shtiblech[item.name] = item.amount;
+                            monthly.total += item.amount;
+                        });
+                    } else if (type.includes('gabbaim')) {
+                        data.forEach(item => {
+                            monthly.gabbaim[item.name] = item.amount;
+                        });
+                    }
+                } else if (type.includes('annual')) {
+                    if (type.includes('shtiblech')) {
+                        data.forEach(item => {
+                            annual.shtiblech[item.name] = item.amount;
+                            annual.total += item.amount;
+                        });
+                    } else if (type.includes('gabbaim')) {
+                        data.forEach(item => {
+                            annual.gabbaim[item.name] = item.amount;
+                        });
+                    }
+                }
+            });
+            
+            // אם אין סכום כולל, חשב מהשטיבלעך
+            if (monthly.total === 0) {
+                monthly.total = Object.values(monthly.shtiblech).reduce((sum, val) => sum + val, 0);
+            }
+            if (annual.total === 0) {
+                annual.total = Object.values(annual.shtiblech).reduce((sum, val) => sum + val, 0);
+            }
+            
+            return { monthly, annual };
+        }
 
         // פונקציה לאנימציה של מספרים
         function animateNumber(element, target, duration, isAmount = false) {
@@ -697,6 +1069,7 @@
             requestAnimationFrame(updateNumber);
         }
 
+        // מעבר בין תצוגה חודשית לשנתית
         function togglePeriod() {
             const toggle = document.getElementById('periodToggle');
             const slider = document.getElementById('toggleSlider');
@@ -705,70 +1078,74 @@
             
             isAnnual = !isAnnual;
             
+            console.log(`🔄 מחליף למצב: ${isAnnual ? 'שנתי' : 'חודשי'}`);
+            
             if (isAnnual) {
                 toggle.classList.add('annual');
                 slider.textContent = 'שנתי';
                 body.classList.add('annual-mode');
-                periodDate.textContent = 'שנת תשפ״ה';
+                if (periodDate) {
+                    periodDate.textContent = 'שנת תשפ״ה';
+                    console.log(`📅 החלפתי לשנתי: שנת תשפ״ה`);
+                }
             } else {
                 toggle.classList.remove('annual');
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
-                periodDate.textContent = 'חודש אייר תשפ״ה';
+                // השתמש בחודש השמור
+                if (periodDate) {
+                    if (currentHebrewMonth && currentHebrewMonth !== 'טוען...') {
+                        periodDate.textContent = `חודש ${currentHebrewMonth} תשפ״ה`;
+                        console.log(`📅 חזרתי לחודשי: חודש ${currentHebrewMonth} תשפ״ה`);
+                    } else {
+                        periodDate.textContent = 'טוען חודש...';
+                        console.log(`⚠️ אין חודש שמור, מציג טוען חודש...`);
+                    }
+                }
             }
             
-            // עדכן את כל הנתונים עם אנימציות
             updateMainProgress();
             updateGroups();
             updateRepresentatives();
         }
 
-        function getCurrentData() {
-            return isAnnual ? annualData : monthlyData;
-        }
-
-        function getCurrentGroupNames() {
-            return isAnnual ? annualGroupNames : monthlyGroupNames;
-        }
-
-        function getCurrentRepresentatives() {
-            return isAnnual ? annualRepresentatives : monthlyRepresentatives;
-        }
-
+        // עדכון הבר הראשי
         function updateMainProgress() {
             const data = getCurrentData();
-            const percentage = Math.round((data.totalRaised / data.totalTarget) * 100);
+            const targets = getCurrentTargets();
+            const percentage = Math.round((data.total / targets.total) * 100);
+            
             const progressBar = document.getElementById('mainProgressBar');
             const progressText = document.getElementById('mainProgressText');
             const totalAmount = document.getElementById('totalAmount');
-            const targetInfo = document.querySelector('.target-info');
+            const targetInfo = document.getElementById('targetInfo');
             
-            // איפוס לאנימציה
             progressBar.style.width = '0%';
             progressText.textContent = '0%';
             
-            // עדכון טקסטים
-            totalAmount.textContent = `${data.totalRaised.toLocaleString()} ש"ח`;
-            targetInfo.textContent = `מתוך יעד של ${data.totalTarget.toLocaleString()} ש"ח`;
+            totalAmount.textContent = `${data.total.toLocaleString()} ש"ח`;
+            targetInfo.textContent = `מתוך יעד של ${targets.total.toLocaleString()} ש"ח`;
             
-            // אנימציה של הבר הראשי
             setTimeout(() => {
                 progressBar.style.width = `${Math.min(percentage, 100)}%`;
                 animateNumber(progressText, percentage, 3000);
             }, 500);
         }
 
+        // עדכון שטיבלעך
         function updateGroups() {
             const container = document.getElementById('shtiblech-container');
             const data = getCurrentData();
-            const groupNames = getCurrentGroupNames();
+            const targets = getCurrentTargets();
             
-            // נקה את התוכן הקיים
             container.innerHTML = '';
             
-            groupNames.forEach((name, index) => {
-                const amount = data.groupAmounts[index];
-                const percentage = Math.round((amount / data.groupTarget) * 100);
+            // מיון לפי סכום - מנמוך לגבוה (הפוך מקודם)
+            const sortedShtiblech = Object.entries(data.shtiblech)
+                .sort(([,a], [,b]) => a - b);
+
+            sortedShtiblech.forEach(([shtibel, amount], index) => {
+                const percentage = Math.round((amount / targets.group) * 100);
                 
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'group-item';
@@ -788,12 +1165,11 @@
                         ${progressHTML}
                         <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;">0 ₪</div>
                     </div>
-                    <div class="group-name">${name}</div>
+                    <div class="group-name" title="${shtibel}">${shtibel}</div>
                 `;
                 
                 container.appendChild(groupDiv);
                 
-                // אנימציה מושהית
                 setTimeout(() => {
                     const progressBar = groupDiv.querySelector('.group-progress-bar');
                     const exceededBar = groupDiv.querySelector('.progress-exceeded');
@@ -815,17 +1191,20 @@
             });
         }
 
+        // עדכון גבאים
         function updateRepresentatives() {
             const container = document.getElementById('gabbaim-container');
             const data = getCurrentData();
-            const representatives = getCurrentRepresentatives();
+            const targets = getCurrentTargets();
             
-            // נקה את התוכן הקיים
             container.innerHTML = '';
             
-            representatives.forEach((name, index) => {
-                const amount = data.representativeAmounts[index];
-                const percentage = Math.round((amount / data.repTarget) * 100);
+            // מיון לפי סכום - מנמוך לגבוה (הפוך מקודם)
+            const sortedGabbaim = Object.entries(data.gabbaim)
+                .sort(([,a], [,b]) => a - b);
+
+            sortedGabbaim.forEach(([name, amount], index) => {
+                const percentage = Math.round((amount / targets.representative) * 100);
                 
                 const repDiv = document.createElement('div');
                 repDiv.className = 'group-item';
@@ -840,17 +1219,17 @@
                     progressHTML = `<div class="group-progress-bar normal" style="height: 0%"></div>`;
                 }
                 
+                // הצגת השם המלא עם tooltip
                 repDiv.innerHTML = `
                     <div class="group-progress">
                         ${progressHTML}
-                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); font-size: 1em; white-space: nowrap;">0 ₪</div>
+                        <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); font-size: 0.8em; white-space: nowrap;">0 ₪</div>
                     </div>
-                    <div class="group-name">${name}</div>
+                    <div class="group-name" title="${name}">${name}</div>
                 `;
                 
                 container.appendChild(repDiv);
                 
-                // אנימציה מושהית
                 setTimeout(() => {
                     const progressBar = repDiv.querySelector('.group-progress-bar');
                     const exceededBar = repDiv.querySelector('.progress-exceeded');
@@ -872,12 +1251,173 @@
             });
         }
 
-        // אתחול
+        // קבלת נתונים נוכחיים
+        function getCurrentData() {
+            return isAnnual ? currentData.annual : currentData.monthly;
+        }
+
+        // קבלת יעדים נוכחיים
+        function getCurrentTargets() {
+            return isAnnual ? TARGETS.annual : TARGETS.monthly;
+        }
+
+        // טעינה ראשונית - בלי דף טעינה
+        async function loadData() {
+            try {
+                console.log('🚀 מתחיל טעינת נתונים ברקע...');
+                showRefreshIndicator();
+                
+                // גלה את כל הגיליונות
+                const sheets = await discoverAllSheets();
+                
+                if (Object.keys(sheets).length === 0) {
+                    throw new Error('לא נמצא אף גיליון מועיל');
+                }
+                
+                // ארגן את הנתונים
+                currentData = organizeDiscoveredData(sheets);
+                
+                console.log('נתונים מאורגנים:', currentData);
+                updateDebug(`נתונים מאורגנים: חודשי=${currentData.monthly.total}, שנתי=${currentData.annual.total}`);
+                
+                // בדוק שיש נתונים
+                if (currentData.monthly.total === 0 && currentData.annual.total === 0) {
+                    throw new Error('לא נמצאו נתונים תקינים בגיליונות');
+                }
+                
+                // עדכן את כל הרכיבים
+                updateMainProgress();
+                updateGroups();
+                updateRepresentatives();
+                
+                updateDebug('הדשבורד טעון בהצלחה!');
+                
+            } catch (error) {
+                console.error('שגיאה בטעינת נתונים:', error);
+                
+                // הצג שגיאה במקום התוכן הראשי
+                const totalAmount = document.getElementById('totalAmount');
+                const mainProgressText = document.getElementById('mainProgressText');
+                const shtiblechContainer = document.getElementById('shtiblech-container');
+                const gabbaimContainer = document.getElementById('gabbaim-container');
+                
+                if (totalAmount) totalAmount.textContent = 'שגיאה';
+                if (mainProgressText) mainProgressText.textContent = 'שגיאה בטעינה';
+                if (shtiblechContainer) {
+                    shtiblechContainer.innerHTML = `
+                        <div style="color: #ff6b6b; text-align: center; width: 100%; padding: 20px;">
+                            שגיאה בטעינת נתונים<br>
+                            <button onclick="loadData()" style="margin-top: 10px; padding: 8px 16px; background: #FFD700; color: #000; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em;">נסה שוב</button>
+                        </div>
+                    `;
+                }
+                if (gabbaimContainer) {
+                    gabbaimContainer.innerHTML = `
+                        <div style="color: #ff6b6b; text-align: center; width: 100%; padding: 20px;">
+                            בעיה בטעינת נתוני גבאים<br>
+                            <button onclick="document.getElementById('debugInfo').classList.toggle('show')" style="margin-top: 10px; padding: 8px 16px; background: #666; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em;">הצג דיבוג</button>
+                        </div>
+                    `;
+                }
+                
+                updateDebug(`שגיאה בטעינה: ${error.message}`);
+            } finally {
+                hideRefreshIndicator();
+            }
+        }
+
+        // רענון אוטומטי מתוקן
+        function startAutoRefresh() {
+            console.log(`🚀 מתחיל רענון אוטומטי כל ${REFRESH_INTERVAL/1000} שניות`);
+            updateDebug(`מתחיל רענון אוטומטי כל ${REFRESH_INTERVAL/1000} שניות`);
+            
+            // נקה interval קיים אם יש
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            // הגדר interval חדש
+            refreshInterval = setInterval(async () => {
+                console.log('⏰ זמן לרענון אוטומטי');
+                await refreshData();
+            }, REFRESH_INTERVAL);
+            
+            updateDebug('רענון אוטומטי הופעל בהצלחה');
+        }
+
+        // עצירת רענון אוטומטי
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+                console.log('⏹️ רענון אוטומטי הופסק');
+                updateDebug('רענון אוטומטי הופסק');
+            }
+        }
+
+        // אתחול כשהדף נטען - עם בדיקה כפולה ולוגים
         document.addEventListener('DOMContentLoaded', function() {
-            updateMainProgress();
-            updateGroups();
-            updateRepresentatives();
+            console.log('🎯 DOMContentLoaded - מתחיל loadData');
+            loadData().then(() => {
+                console.log('🕐 מתחיל startAutoRefresh');
+                startAutoRefresh();
+            });
         });
+
+        // וגם קריאה מיידית במקרה שה-DOM כבר נטען
+        if (document.readyState === 'loading') {
+            console.log('📄 הדף עדיין נטען, מחכה ל-DOMContentLoaded');
+        } else {
+            console.log('📄 הדף כבר נטען, מריץ loadData ו-startAutoRefresh מיד');
+            loadData().then(() => {
+                startAutoRefresh();
+            });
+        }
+
+        // רענון ידני בלחיצה על F5 או Ctrl+R
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F5' || (event.ctrlKey && event.key === 'r')) {
+                event.preventDefault();
+                cachedData = null; // נקה cache
+                loadData();
+            }
+        });
+
+        // רענון ידני בלחיצה על הלוגו
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('logo')) {
+                event.preventDefault();
+                console.log('🖱️ רענון ידני דרך הלוגו');
+                refreshData();
+            }
+        });
+
+        // 🎯 עדכון מיידי של החודש - רץ מיד כשהדף נטען
+        (async function updateMonthImmediately() {
+            console.log('🚀 רץ מיידית לעדכון החודש');
+            try {
+                const hebrewMonth = await getCurrentHebrewMonth();
+                currentHebrewMonth = hebrewMonth;
+                
+                const periodDate = document.getElementById('periodDate');
+                if (periodDate) {
+                    periodDate.textContent = `חודש ${hebrewMonth} תשפ״ה`;
+                    console.log(`✅ החודש עודכן מיידית ל: ${hebrewMonth}`);
+                } else {
+                    console.log('❌ אלמנט periodDate לא נמצא עדיין');
+                    // נסה שוב אחרי רגע
+                    setTimeout(() => {
+                        const periodDate2 = document.getElementById('periodDate');
+                        if (periodDate2) {
+                            periodDate2.textContent = `חודש ${hebrewMonth} תשפ״ה`;
+                            console.log(`✅ החודש עודכן בנסיון שני ל: ${hebrewMonth}`);
+                        }
+                    }, 100);
+                }
+            } catch (error) {
+                console.log('❌ שגיאה בעדכון מיידי של החודש:', error);
+            }
+        })();
     </script>
 </body>
 </html>
