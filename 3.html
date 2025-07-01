@@ -606,7 +606,7 @@
             return null;
         }
 
-        // קבלת החודש העברי הנוכחי (חודש קודם)
+        // קבלת החודש העברי הנוכחי (חודש קודם) - עם debug מפורט
         async function getCurrentHebrewMonth() {
             try {
                 const now = new Date();
@@ -615,11 +615,19 @@
                 const month = lastMonth.getMonth() + 1;
                 
                 const url = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=1&g2h=1`;
+                console.log(`🌐 מתחבר ל-API: ${url}`);
+                updateDebug(`מתחבר ל-API: ${url}`);
+                
                 const response = await fetch(url);
+                console.log(`📡 תגובת API: ${response.status}`);
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(`📊 נתונים מה-API:`, data);
+                    updateDebug(`נתונים מה-API: ${JSON.stringify(data)}`);
+                    
                     const englishMonth = data.hm; // החודש העברי באנגלית
+                    console.log(`📅 חודש באנגלית: ${englishMonth}`);
                     
                     // מיפוי מאנגלית לעברית
                     const monthMapping = {
@@ -640,14 +648,17 @@
                     };
                     
                     const hebrewMonth = monthMapping[englishMonth] || englishMonth;
-                    console.log(`חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
+                    console.log(`✅ חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
+                    updateDebug(`חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
                     return hebrewMonth;
                 } else {
-                    // חזור לחישוב פשוט במקרה של שגיאה
+                    console.log(`❌ שגיאה ב-API: ${response.status}`);
+                    updateDebug(`שגיאה ב-API: ${response.status}`);
                     return 'טבת';
                 }
             } catch (error) {
-                console.log('שגיאה בקבלת חודש עברי, משתמש בחודש ברירת מחדל');
+                console.log('❌ שגיאה בקבלת חודש עברי:', error);
+                updateDebug(`שגיאה בקבלת חודש עברי: ${error.message}`);
                 return 'טבת';
             }
         }
