@@ -235,6 +235,9 @@
             align-items: center;
             justify-content: center;
             line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         .group-progress {
@@ -576,7 +579,29 @@
             return null;
         }
 
-        // ניתוח סוג הגיליון לפי התוכן
+        // קבלת החודש העברי הנוכחי (חודש קודם)
+        async function getCurrentHebrewMonth() {
+            try {
+                const now = new Date();
+                const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                const year = lastMonth.getFullYear();
+                const month = lastMonth.getMonth() + 1;
+                
+                const url = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=1&g2h=1`;
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.hm; // החודש העברי
+                } else {
+                    // חזור לחישוב פשוט במקרה של שגיאה
+                    return 'טבת';
+                }
+            } catch (error) {
+                console.log('שגיאה בקבלת חודש עברי, משתמש בחודש ברירת מחדל');
+                return 'טבת';
+            }
+        }
         function analyzeSheetType(csvData, gid) {
             const lines = csvData.split('\n').filter(line => line.trim());
             if (lines.length < 2) return { type: 'unknown', data: null };
@@ -738,13 +763,15 @@
         }
 
         // חישוב סיכומים מנתונים גולמיים
-        function computeFromRawData(rawData) {
+        async function computeFromRawData(rawData) {
             const monthlyGabbaim = {};
             const annualGabbaim = {};
             const monthlyShtiblech = {};
             const annualShtiblech = {};
             
-            const currentMonth = 'אייר'; // החודש הנוכחי לפי הנתונים
+            // קבל את החודש הנוכחי מ-API
+            const currentMonth = await getCurrentHebrewMonth();
+            console.log(`החודש הנוכחי: ${currentMonth}`);
             
             rawData.forEach(row => {
                 const { name, shtibel, month, amount } = row;
@@ -878,7 +905,10 @@
                 toggle.classList.remove('annual');
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
-                periodDate.textContent = 'חודש טבת תשפ״ה';
+                // נקבל את החודש הנכון
+                getCurrentHebrewMonth().then(month => {
+                    periodDate.textContent = `חודש ${month} תשפ״ה`;
+                });
             }
             
             updateMainProgress();
@@ -917,10 +947,9 @@
             
             container.innerHTML = '';
             
-            // מיון לפי סכום
+            // מיון לפי סכום - ללא הגבלה!
             const sortedShtiblech = Object.entries(data.shtiblech)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 8); // מגביל ל-8 שטיבלעך
+                .sort(([,a], [,b]) => b - a);
 
             sortedShtiblech.forEach(([shtibel, amount], index) => {
                 const percentage = Math.round((amount / targets.group) * 100);
@@ -943,7 +972,7 @@
                         ${progressHTML}
                         <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;">0 ₪</div>
                     </div>
-                    <div class="group-name">${shtibel}</div>
+                    <div class="group-name" title="${shtibel}">${shtibel}</div>
                 `;
                 
                 container.appendChild(groupDiv);
@@ -977,10 +1006,9 @@
             
             container.innerHTML = '';
             
-            // מיון לפי סכום
+            // מיון לפי סכום - ללא הגבלה!
             const sortedGabbaim = Object.entries(data.gabbaim)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 15); // מגביל ל-15 גבאים
+                .sort(([,a], [,b]) => b - a);
 
             sortedGabbaim.forEach(([name, amount], index) => {
                 const percentage = Math.round((amount / targets.representative) * 100);
@@ -998,15 +1026,13 @@
                     progressHTML = `<div class="group-progress-bar normal" style="height: 0%"></div>`;
                 }
                 
-                // קיצור שם ארוך
-                const shortName = name.length > 15 ? name.substring(0, 15) + '...' : name;
-                
+                // הצגת השם המלא עם tooltip
                 repDiv.innerHTML = `
                     <div class="group-progress">
                         ${progressHTML}
                         <div class="group-percentage" style="transform: translate(-50%, -50%) rotate(-90deg); font-size: 0.8em; white-space: nowrap;">0 ₪</div>
                     </div>
-                    <div class="group-name" title="${name}">${shortName}</div>
+                    <div class="group-name" title="${name}">${name}</div>
                 `;
                 
                 container.appendChild(repDiv);
