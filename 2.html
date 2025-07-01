@@ -752,7 +752,7 @@
             if (rawDataSheet && Object.keys(sheets).length === 1) {
                 console.log('מחשב סיכומים מהנתונים הגולמיים...');
                 updateDebug('מחשב סיכומים מהנתונים הגולמיים...');
-                const computed = computeFromRawData(rawDataSheet);
+                const computed = await computeFromRawData(rawDataSheet); // הוספתי await כאן!
                 Object.assign(sheets, computed);
             }
             
