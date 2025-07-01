@@ -1296,6 +1296,33 @@
                 loadData();
             }
         });
+
+        // 🎯 עדכון מיידי של החודש - רץ מיד כשהדף נטען
+        (async function updateMonthImmediately() {
+            console.log('🚀 רץ מיידית לעדכון החודש');
+            try {
+                const hebrewMonth = await getCurrentHebrewMonth();
+                currentHebrewMonth = hebrewMonth;
+                
+                const periodDate = document.getElementById('periodDate');
+                if (periodDate) {
+                    periodDate.textContent = `חודש ${hebrewMonth} תשפ״ה`;
+                    console.log(`✅ החודש עודכן מיידית ל: ${hebrewMonth}`);
+                } else {
+                    console.log('❌ אלמנט periodDate לא נמצא עדיין');
+                    // נסה שוב אחרי רגע
+                    setTimeout(() => {
+                        const periodDate2 = document.getElementById('periodDate');
+                        if (periodDate2) {
+                            periodDate2.textContent = `חודש ${hebrewMonth} תשפ״ה`;
+                            console.log(`✅ החודש עודכן בנסיון שני ל: ${hebrewMonth}`);
+                        }
+                    }, 100);
+                }
+            } catch (error) {
+                console.log('❌ שגיאה בעדכון מיידי של החודש:', error);
+            }
+        })();
     </script>
 </body>
 </html>
