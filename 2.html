@@ -592,7 +592,29 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    return data.hm; // החודש העברי
+                    const englishMonth = data.hm; // החודש העברי באנגלית
+                    
+                    // מיפוי מאנגלית לעברית
+                    const monthMapping = {
+                        'Nissan': 'ניסן',
+                        'Iyyar': 'אייר', 
+                        'Sivan': 'סיוון',
+                        'Tamuz': 'תמוז',
+                        'Av': 'אב',
+                        'Elul': 'אלול',
+                        'Tishrei': 'תשרי',
+                        'Cheshvan': 'חשוון',
+                        'Kislev': 'כסלו',
+                        'Tevet': 'טבת',
+                        'Shvat': 'שבט',
+                        'Adar': 'אדר',
+                        'Adar I': 'אדר א׳',
+                        'Adar II': 'אדר ב׳'
+                    };
+                    
+                    const hebrewMonth = monthMapping[englishMonth] || englishMonth;
+                    console.log(`חודש עברי: ${englishMonth} -> ${hebrewMonth}`);
+                    return hebrewMonth;
                 } else {
                     // חזור לחישוב פשוט במקרה של שגיאה
                     return 'טבת';
