@@ -440,6 +440,25 @@
             display: block;
         }
 
+        .refresh-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #FFD700;
+            font-size: 0.9em;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .refresh-indicator.show {
+            opacity: 1;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .top-row {
@@ -491,22 +510,22 @@
             .period-date {
                 font-size: 1em;
             }
+
+            .refresh-indicator {
+                top: 10px;
+                left: 10px;
+                font-size: 0.8em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="loading" id="loadingIndicator">
-            מגלה ומנתח את הגיליונות שלך...<br>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="progress-text" id="progressText">מכין להתחלה...</div>
-        </div>
-        
+    <div class="refresh-indicator" id="refreshIndicator">מרענן נתונים...</div>
+    
+    <div class="container">        
         <div class="debug-info" id="debugInfo"></div>
         
-        <div class="top-row" id="mainContent" style="display: none;">
+        <div class="top-row" id="mainContent">
             <div class="title-box">
                 <div class="title-content">
                     <img src="https://raw.githubusercontent.com/na5845/E/main/logo.png" alt="לוגו" class="logo">
@@ -523,12 +542,12 @@
                     </div>
                 </div>
                 
-                <div class="total-amount" id="totalAmount">0 ש"ח</div>
+                <div class="total-amount" id="totalAmount">טוען...</div>
                 <div class="target-info" id="targetInfo">מתוך יעד של 8000 ש"ח</div>
                 
                 <div class="main-progress">
                     <div class="main-progress-bar" id="mainProgressBar">
-                        <div class="main-progress-text" id="mainProgressText">0%</div>
+                        <div class="main-progress-text" id="mainProgressText">טוען...</div>
                     </div>
                 </div>
             </div>
@@ -537,17 +556,17 @@
                 <div class="content-box">
                     <div class="section-title">לפי שטיבלעך</div>
                     <div class="groups-container" id="shtiblech-container">
-                        <!-- הקבוצות יתווספו כאן באמצעות JavaScript -->
+                        <div style="color: #FFD700; text-align: center; width: 100%;">טוען נתונים...</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="gabbaim-section" id="gabbaimSection" style="display: none;">
+        <div class="gabbaim-section" id="gabbaimSection">
             <div class="content-box">
                 <div class="section-title">לפי גבאים</div>
                 <div class="groups-container" id="gabbaim-container">
-                    <!-- הנציגים יתווספו כאן באמצעות JavaScript -->
+                    <div style="color: #FFD700; text-align: center; width: 100%;">טוען נתונים...</div>
                 </div>
             </div>
         </div>
@@ -557,6 +576,7 @@
         // הגדרות בסיסיות
         const SPREADSHEET_ID = '1njmfovX0EOsnCPp6QpN26ODcabTTICUL0FNANA-4F84';
         const MAX_SHEETS_TO_CHECK = 10; // כמה גיליונות לבדוק
+        const REFRESH_INTERVAL = 40000; // 40 שניות
         
         const TARGETS = {
             monthly: {
@@ -579,6 +599,23 @@
             monthly: { total: 0, shtiblech: {}, gabbaim: {} },
             annual: { total: 0, shtiblech: {}, gabbaim: {} }
         };
+        let refreshInterval = null; // משתנה לשמירת ה-interval
+
+        // הצגת אינדיקטור רענון
+        function showRefreshIndicator() {
+            const indicator = document.getElementById('refreshIndicator');
+            if (indicator) {
+                indicator.classList.add('show');
+            }
+        }
+
+        // הסתרת אינדיקטור רענון
+        function hideRefreshIndicator() {
+            const indicator = document.getElementById('refreshIndicator');
+            if (indicator) {
+                indicator.classList.remove('show');
+            }
+        }
 
         // פונקציה לניסיון גישה לגיליון לפי GID
         async function tryFetchSheetByGID(gid) {
@@ -662,6 +699,7 @@
                 return 'טבת';
             }
         }
+        
         function analyzeSheetType(csvData, gid) {
             const lines = csvData.split('\n').filter(line => line.trim());
             if (lines.length < 2) return { type: 'unknown', data: null };
@@ -777,16 +815,10 @@
             return fields;
         }
 
-        // עדכון בר התקדמות
+        // עדכון בר התקדמות (לא בשימוש עוד)
         function updateProgress(current, total, message) {
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            
-            if (progressBar && progressText) {
-                const percentage = Math.round((current / total) * 100);
-                progressBar.style.width = percentage + '%';
-                progressText.textContent = message;
-            }
+            // פונקציה זו נשארת לצורך תאימות אבל לא בשימוש
+            console.log(`התקדמות: ${current}/${total} - ${message}`);
         }
 
         // גילוי וניתוח כל הגיליונות - גרסה מהירה עם cache
@@ -910,32 +942,64 @@
             return result;
         }
 
-        // בדיקה מהירה לשינויים (רק גיליון ראשון)
-        async function checkForChanges() {
+        // רענון נתונים (בלי טעינה מחדש של כל הממשק)
+        async function refreshData() {
             try {
-                const csvData = await tryFetchSheetByGID(0);
-                if (csvData) {
-                    // בדוק אם הנתונים שונים מהפעם הקודמת
-                    const currentHash = csvData.length + csvData.substring(0, 100);
-                    
-                    if (!cachedData.lastHash || cachedData.lastHash !== currentHash) {
-                        console.log('זוהו שינויים, מרענן נתונים...');
-                        cachedData = null; // נקה cache
-                        return true;
-                    }
-                    
-                    cachedData.lastHash = currentHash;
+                console.log('🔄 מתחיל רענון נתונים...');
+                showRefreshIndicator();
+                
+                // נקה cache כדי לכפות טעינה מחדש
+                cachedData = null;
+                
+                // טען נתונים חדשים
+                const sheets = await discoverAllSheets();
+                
+                if (Object.keys(sheets).length === 0) {
+                    console.log('⚠️ לא נמצאו נתונים ברענון');
+                    return;
                 }
-                return false;
+                
+                // ארגן נתונים חדשים
+                const newData = organizeDiscoveredData(sheets);
+                
+                // בדוק אם יש שינויים
+                const hasChanges = (
+                    newData.monthly.total !== currentData.monthly.total || 
+                    newData.annual.total !== currentData.annual.total ||
+                    Object.keys(newData.monthly.shtiblech).length !== Object.keys(currentData.monthly.shtiblech).length ||
+                    Object.keys(newData.annual.shtiblech).length !== Object.keys(currentData.annual.shtiblech).length
+                );
+                
+                if (hasChanges) {
+                    console.log('✅ זוהו שינויים בנתונים, מעדכן תצוגה...');
+                    currentData = newData;
+                    
+                    // עדכן את התצוגה
+                    updateMainProgress();
+                    updateGroups();
+                    updateRepresentatives();
+                    
+                    updateDebug(`רענון הושלם בהצלחה. חודשי: ${currentData.monthly.total}, שנתי: ${currentData.annual.total}`);
+                } else {
+                    console.log('📊 אין שינויים בנתונים');
+                    updateDebug('רענון הושלם - אין שינויים בנתונים');
+                }
+                
             } catch (error) {
-                console.log('שגיאה בבדיקת שינויים:', error);
-                return false;
+                console.error('❌ שגיאה ברענון נתונים:', error);
+                updateDebug(`שגיאה ברענון: ${error.message}`);
+            } finally {
+                hideRefreshIndicator();
             }
         }
+
         function updateDebug(message) {
             const debugElement = document.getElementById('debugInfo');
-            debugElement.innerHTML += message + '<br>';
-            // debugElement.classList.add('show'); // הסר הערה כדי להציג דיבוג
+            if (debugElement) {
+                const timestamp = new Date().toLocaleTimeString('he-IL');
+                debugElement.innerHTML += `[${timestamp}] ${message}<br>`;
+                // debugElement.classList.add('show'); // הסר הערה כדי להציג דיבוג
+            }
         }
 
         // ארגון הנתונים שנתפסו
@@ -1197,12 +1261,11 @@
             return isAnnual ? TARGETS.annual : TARGETS.monthly;
         }
 
-        // טעינה ראשונית
+        // טעינה ראשונית - בלי דף טעינה
         async function loadData() {
             try {
-                document.getElementById('loadingIndicator').style.display = 'block';
-                document.getElementById('mainContent').style.display = 'none';
-                document.getElementById('gabbaimSection').style.display = 'none';
+                console.log('🚀 מתחיל טעינת נתונים ברקע...');
+                showRefreshIndicator();
                 
                 // גלה את כל הגיליונות
                 const sheets = await discoverAllSheets();
@@ -1222,11 +1285,6 @@
                     throw new Error('לא נמצאו נתונים תקינים בגיליונות');
                 }
                 
-                // הסתר הודעת טעינה והצג תוכן
-                document.getElementById('loadingIndicator').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'flex';
-                document.getElementById('gabbaimSection').style.display = 'block';
-                
                 // עדכן את כל הרכיבים
                 updateMainProgress();
                 updateGroups();
@@ -1236,64 +1294,101 @@
                 
             } catch (error) {
                 console.error('שגיאה בטעינת נתונים:', error);
-                document.getElementById('loadingIndicator').innerHTML = `
-                    <div class="error">
-                        שגיאה בטעינת נתונים מהגיליון<br>
-                        ${error.message}<br>
-                        <br>
-                        <button onclick="loadData()" style="margin-top: 10px; padding: 10px 20px; background: #FFD700; color: #000; border: none; border-radius: 5px; cursor: pointer;">נסה שוב</button>
-                        <button onclick="document.getElementById('debugInfo').classList.toggle('show')" style="margin-top: 10px; margin-right: 10px; padding: 10px 20px; background: #666; color: #fff; border: none; border-radius: 5px; cursor: pointer;">הצג פרטי דיבוג</button>
-                    </div>
-                `;
+                
+                // הצג שגיאה במקום התוכן הראשי
+                const totalAmount = document.getElementById('totalAmount');
+                const mainProgressText = document.getElementById('mainProgressText');
+                const shtiblechContainer = document.getElementById('shtiblech-container');
+                const gabbaimContainer = document.getElementById('gabbaim-container');
+                
+                if (totalAmount) totalAmount.textContent = 'שגיאה';
+                if (mainProgressText) mainProgressText.textContent = 'שגיאה בטעינה';
+                if (shtiblechContainer) {
+                    shtiblechContainer.innerHTML = `
+                        <div style="color: #ff6b6b; text-align: center; width: 100%; padding: 20px;">
+                            שגיאה בטעינת נתונים<br>
+                            <button onclick="loadData()" style="margin-top: 10px; padding: 8px 16px; background: #FFD700; color: #000; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em;">נסה שוב</button>
+                        </div>
+                    `;
+                }
+                if (gabbaimContainer) {
+                    gabbaimContainer.innerHTML = `
+                        <div style="color: #ff6b6b; text-align: center; width: 100%; padding: 20px;">
+                            בעיה בטעינת נתוני גבאים<br>
+                            <button onclick="document.getElementById('debugInfo').classList.toggle('show')" style="margin-top: 10px; padding: 8px 16px; background: #666; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em;">הצג דיבוג</button>
+                        </div>
+                    `;
+                }
+                
+                updateDebug(`שגיאה בטעינה: ${error.message}`);
+            } finally {
+                hideRefreshIndicator();
             }
         }
 
-        // רענון אוטומטי כל 2 דקות
+        // רענון אוטומטי מתוקן
         function startAutoRefresh() {
-            setInterval(async () => {
-                console.log('מרענן נתונים...');
-                try {
-                    const newSheets = await discoverAllSheets();
-                    const newData = organizeDiscoveredData(newSheets);
-                    
-                    // בדוק אם יש שינויים
-                    if (newData.monthly.total !== currentData.monthly.total || 
-                        newData.annual.total !== currentData.annual.total) {
-                        
-                        console.log('זוהו שינויים בנתונים, מעדכן תצוגה...');
-                        currentData = newData;
-                        
-                        updateMainProgress();
-                        updateGroups();
-                        updateRepresentatives();
-                    }
-                } catch (error) {
-                    console.error('שגיאה ברענון אוטומטי:', error);
-                }
-            }, 120000); // כל 2 דקות
+            console.log(`🚀 מתחיל רענון אוטומטי כל ${REFRESH_INTERVAL/1000} שניות`);
+            updateDebug(`מתחיל רענון אוטומטי כל ${REFRESH_INTERVAL/1000} שניות`);
+            
+            // נקה interval קיים אם יש
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            // הגדר interval חדש
+            refreshInterval = setInterval(async () => {
+                console.log('⏰ זמן לרענון אוטומטי');
+                await refreshData();
+            }, REFRESH_INTERVAL);
+            
+            updateDebug('רענון אוטומטי הופעל בהצלחה');
         }
 
-        // אתחול כשהדף נטען - עם בדיקה כפולה
+        // עצירת רענון אוטומטי
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+                console.log('⏹️ רענון אוטומטי הופסק');
+                updateDebug('רענון אוטומטי הופסק');
+            }
+        }
+
+        // אתחול כשהדף נטען - עם בדיקה כפולה ולוגים
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🎯 DOMContentLoaded - מתחיל loadData');
-            loadData();
-            startAutoRefresh();
+            loadData().then(() => {
+                console.log('🕐 מתחיל startAutoRefresh');
+                startAutoRefresh();
+            });
         });
 
         // וגם קריאה מיידית במקרה שה-DOM כבר נטען
         if (document.readyState === 'loading') {
             console.log('📄 הדף עדיין נטען, מחכה ל-DOMContentLoaded');
         } else {
-            console.log('📄 הדף כבר נטען, מריץ loadData מיד');
-            loadData();
-            startAutoRefresh();
+            console.log('📄 הדף כבר נטען, מריץ loadData ו-startAutoRefresh מיד');
+            loadData().then(() => {
+                startAutoRefresh();
+            });
         }
 
         // רענון ידני בלחיצה על F5 או Ctrl+R
         document.addEventListener('keydown', function(event) {
             if (event.key === 'F5' || (event.ctrlKey && event.key === 'r')) {
                 event.preventDefault();
+                cachedData = null; // נקה cache
                 loadData();
+            }
+        });
+
+        // רענון ידני בלחיצה על הלוגו
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('logo')) {
+                event.preventDefault();
+                console.log('🖱️ רענון ידני דרך הלוגו');
+                refreshData();
             }
         });
 
