@@ -969,9 +969,9 @@
             
             container.innerHTML = '';
             
-            // מיון לפי סכום - ללא הגבלה!
+            // מיון לפי סכום - מנמוך לגבוה (הפוך מקודם)
             const sortedShtiblech = Object.entries(data.shtiblech)
-                .sort(([,a], [,b]) => b - a);
+                .sort(([,a], [,b]) => a - b);
 
             sortedShtiblech.forEach(([shtibel, amount], index) => {
                 const percentage = Math.round((amount / targets.group) * 100);
@@ -1028,9 +1028,9 @@
             
             container.innerHTML = '';
             
-            // מיון לפי סכום - ללא הגבלה!
+            // מיון לפי סכום - מנמוך לגבוה (הפוך מקודם)
             const sortedGabbaim = Object.entries(data.gabbaim)
-                .sort(([,a], [,b]) => b - a);
+                .sort(([,a], [,b]) => a - b);
 
             sortedGabbaim.forEach(([name, amount], index) => {
                 const percentage = Math.round((amount / targets.representative) * 100);
