@@ -574,7 +574,7 @@
         let isAnnual = false;
         let discoveredSheets = {};
         let cachedData = null; // שמירת נתונים בזיכרון
-        let currentHebrewMonth = 'טבת'; // שמירת החודש העברי
+        let currentHebrewMonth = 'טוען...'; // משתנה לשמירת החודש העברי
         let currentData = {
             monthly: { total: 0, shtiblech: {}, gabbaim: {} },
             annual: { total: 0, shtiblech: {}, gabbaim: {} }
@@ -1029,12 +1029,14 @@
                 slider.textContent = 'חודשי';
                 body.classList.remove('annual-mode');
                 // השתמש בחודש השמור
-                if (periodDate && currentHebrewMonth) {
-                    periodDate.textContent = `חודש ${currentHebrewMonth} תשפ״ה`;
-                    console.log(`📅 חזרתי לחודשי: חודש ${currentHebrewMonth} תשפ״ה`);
-                } else {
-                    periodDate.textContent = 'טוען חודש...';
-                    console.log(`⚠️ אין חודש שמור, מציג טוען חודש...`);
+                if (periodDate) {
+                    if (currentHebrewMonth && currentHebrewMonth !== 'טוען...') {
+                        periodDate.textContent = `חודש ${currentHebrewMonth} תשפ״ה`;
+                        console.log(`📅 חזרתי לחודשי: חודש ${currentHebrewMonth} תשפ״ה`);
+                    } else {
+                        periodDate.textContent = 'טוען חודש...';
+                        console.log(`⚠️ אין חודש שמור, מציג טוען חודש...`);
+                    }
                 }
             }
             
@@ -1271,11 +1273,21 @@
             }, 120000); // כל 2 דקות
         }
 
-        // אתחול כשהדף נטען
+        // אתחול כשהדף נטען - עם בדיקה כפולה
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 DOMContentLoaded - מתחיל loadData');
             loadData();
             startAutoRefresh();
         });
+
+        // וגם קריאה מיידית במקרה שה-DOM כבר נטען
+        if (document.readyState === 'loading') {
+            console.log('📄 הדף עדיין נטען, מחכה ל-DOMContentLoaded');
+        } else {
+            console.log('📄 הדף כבר נטען, מריץ loadData מיד');
+            loadData();
+            startAutoRefresh();
+        }
 
         // רענון ידני בלחיצה על F5 או Ctrl+R
         document.addEventListener('keydown', function(event) {
@@ -1284,6 +1296,33 @@
                 loadData();
             }
         });
+
+        // 🎯 עדכון מיידי של החודש - רץ מיד כשהדף נטען
+        (async function updateMonthImmediately() {
+            console.log('🚀 רץ מיידית לעדכון החודש');
+            try {
+                const hebrewMonth = await getCurrentHebrewMonth();
+                currentHebrewMonth = hebrewMonth;
+                
+                const periodDate = document.getElementById('periodDate');
+                if (periodDate) {
+                    periodDate.textContent = `חודש ${hebrewMonth} תשפ״ה`;
+                    console.log(`✅ החודש עודכן מיידית ל: ${hebrewMonth}`);
+                } else {
+                    console.log('❌ אלמנט periodDate לא נמצא עדיין');
+                    // נסה שוב אחרי רגע
+                    setTimeout(() => {
+                        const periodDate2 = document.getElementById('periodDate');
+                        if (periodDate2) {
+                            periodDate2.textContent = `חודש ${hebrewMonth} תשפ״ה`;
+                            console.log(`✅ החודש עודכן בנסיון שני ל: ${hebrewMonth}`);
+                        }
+                    }, 100);
+                }
+            } catch (error) {
+                console.log('❌ שגיאה בעדכון מיידי של החודש:', error);
+            }
+        })();
     </script>
 </body>
 </html>
